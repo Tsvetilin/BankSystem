@@ -3,8 +3,8 @@
 #include "Date.hpp"
 
 class DateTime {
-	Date date;
 	Time time;
+	Date date;
 
 public:
 	DateTime(Date date, Time time):date(date),time(time) {}
@@ -13,4 +13,11 @@ public:
 	static DateTime now() {
 		return DateTime(Date::now(), Time::now());
 	}
+
+	friend std::ostream& operator<<(std::ostream& stream, const DateTime& dt);
+		
 };
+
+std::ostream& operator<<(std::ostream& stream, const DateTime& dt) {
+	stream << dt.date << " " << dt.time;
+}

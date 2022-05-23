@@ -22,6 +22,8 @@ public:
 
 	bool contains(const T& element) const;
 	void add(const T& element);
+	void remove(const T& element);
+	void removeAt(size_t index);
 	T& at(size_t ind) const;
 
 	size_t getCount()const {
@@ -101,6 +103,52 @@ void List<T>::add(const T& element) {
 
 	data[count++] = element;
 }
+
+
+template <typename T>
+void List<T>::remove(const T& element) {
+	for (size_t i = 0; i < count; i++)
+	{
+		if (data[i] == element) {
+			removeAt(i);
+			return;
+		}
+	}
+}
+
+template <typename T>
+void List<T>::removeAt(size_t index) {
+	if (index >= count) {
+		return;
+	}
+
+	--count;
+
+	if (count * RESIZE_FACTOR * RESIZE_FACTOR <= capacity) {
+		capacity /= RESIZE_FACTOR;
+		T* newData = new T[capacity];
+
+		for (size_t i = 0; i < index; i++)
+		{
+			newData[i] = data[i];
+		}
+
+		for (size_t i = index; i < count; i++)
+		{
+			newData[i] = data[i + 1];
+		}
+
+		delete[] data;
+		data = newData;
+		return;
+	}
+
+	for (size_t i = index; i < count; i++)
+	{
+		data[index] = data[index + 1];
+	}
+}
+
 
 template <typename T>
 bool List<T>::contains(const T& element)const {

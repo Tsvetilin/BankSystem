@@ -5,11 +5,21 @@ class Time {
 	size_t nanosec;
 
 public:
-	Time(time_t time) {
+	Time(time_t time) :nanosec(0) {
 
+		time %= (24 * 60 * 60);
+		hour = time / 3600;
+		minute = (time % 3600) / 60;
+		second = (time % 3600) % 60;
 	}
 
 	static Time now() {
 		return Time(time(0));
 	}
+
+	friend std::ostream& operator<<(std::ostream& stream, const Time& dt);
 };
+
+std::ostream& operator<<(std::ostream& stream, const Time& dt) {
+	stream << dt.hour << ":" << dt.minute << ":" << dt.second;
+}
