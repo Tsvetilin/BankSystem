@@ -10,6 +10,8 @@ class String {
 public:
 	String() : String(nullptr) {}
 	String(const char* const);
+	explicit String(char);
+	explicit String(size_t);
 	String(const String&);
 
 	String& operator=(const String&);
@@ -24,6 +26,8 @@ public:
 	size_t getLength() const;
 	String substr(size_t, size_t) const;
 	int indexOf(char c) const;
+	bool isAlphaNumeric() const;
+
 
 	void trim();
 	void removeWhitespace();

@@ -265,3 +265,32 @@ void String::toLower() {
 	}
 }
 
+bool String::isAlphaNumeric() const {
+	for (size_t i = 0; i < length; i++)
+	{
+		if (!isAlphaNumericSymbol(string[i])) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+explicit String::String(char c) {
+	length = 1;
+	string = new char[length + 1];
+	string[0] = c;
+	string[1] = '\0';
+}
+
+explicit String::String(size_t num) {
+	length = getNumberDigitsCount(num);
+	string = new char[length + 1];
+	size_t i = length;
+	while (num != 0) {
+		string[length - i - 1] = digitToChar(num % 10);
+		num /= 10;
+	}
+
+	string[length] = '\0';
+}
