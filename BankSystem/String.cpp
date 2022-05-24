@@ -1,7 +1,7 @@
 #pragma warning(disable:4996)
 
 #include "String.hpp"
-
+#include "Common.hpp"
 #include <iostream>
 
 const size_t BUFF_LENGTH = 4096;
@@ -192,7 +192,7 @@ void String::trim() {
 	*this = substr(leadingSpaces, length - leadingSpaces - followingSpaces);
 }
 
-int String::indexOf(char c) {
+int String::indexOf(char c) const {
 	for (size_t i = 0; i < length; i++)
 	{
 		if (string[i] == c) {
@@ -217,3 +217,51 @@ String& String::operator=(String&& other) noexcept {
 
 	return *this;
 }
+
+void String::removeWhitespace() {
+	size_t countSpaces = 0;
+	for (size_t i = 0; i < length; i++)
+	{
+		if (string[i] == ' ') {
+			++countSpaces;
+		}
+	}
+
+	if (countSpaces == 0) {
+		return;
+	}
+
+	char* newString = new char[length + 1 - countSpaces];
+	size_t ind = 0;
+	for (size_t i = 0; i < length; i++)
+	{
+		if (string[i] != ' ') {
+			newString[ind++] = string[i];
+		}
+	}
+
+	newString[ind] = '\0';
+
+	delete[] string;
+	string = newString;
+
+}
+
+void String::toUpper() {
+	for (size_t i = 0; i < length; i++)
+	{
+		if (isLowercaseLetter(string[i])) {
+			string[i] += TO_UPPER_TRANSFORM;
+		}
+	}
+}
+
+void String::toLower() {
+	for (size_t i = 0; i < length; i++)
+	{
+		if (isUppercaseLetter(string[i])) {
+			string[i] += TO_LOWER_TRANSFORM;
+		}
+	}
+}
+

@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="Account.hpp" />
     <ClInclude Include="Bank.hpp" />
+    <ClInclude Include="Common.hpp" />
     <ClInclude Include="DateTime.hpp" />
     <ClInclude Include="List.hpp" />
     <ClInclude Include="Log.hpp" />

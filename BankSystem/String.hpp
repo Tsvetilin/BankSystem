@@ -23,9 +23,12 @@ public:
 	const char* c_str() const;
 	size_t getLength() const;
 	String substr(size_t, size_t) const;
-	int indexOf(char c);
+	int indexOf(char c) const;
 
 	void trim();
+	void removeWhitespace();
+	void toUpper();
+	void toLower();
 	void concat(const String&);
 
 	String& operator+=(const String&);
