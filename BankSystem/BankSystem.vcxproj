@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Account.hpp" />
+    <ClInclude Include="AccountType.hpp" />
     <ClInclude Include="Bank.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="DateTime.hpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Date.hpp" />
     <ClInclude Include="PrivilegeAccount.hpp" />
     <ClInclude Include="SavingsAccount.hpp" />
+    <ClInclude Include="Serializable.hpp" />
     <ClInclude Include="String.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="TransactType.hpp" />

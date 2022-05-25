@@ -13,7 +13,7 @@ enum class TransactType {
 };
 
 
-String TransactTypeToString(TransactType& type) {
+String transactTypeToString(const TransactType& type) {
 	switch (type)
 	{
 		case TransactType::CreateAccount: return "Create account";

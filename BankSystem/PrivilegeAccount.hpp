@@ -22,5 +22,15 @@ public:
 		stream << "Account type: privilage" << std::endl;
 		Account::display(stream);
 	}
+
+	virtual bool serialize(std::ostream& stream) const override {
+		Account::serialize(stream);
+		serializePrimitive(stream, overdraft);
+	}
+
+	virtual bool deserialize(std::istream& stream) override {
+		Account::deserialize(stream);
+		deserializePrimitive(stream, overdraft);
+	}
 };
 

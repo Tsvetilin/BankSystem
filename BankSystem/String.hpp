@@ -1,7 +1,8 @@
 #pragma once
+#include "Serializable.hpp"
 #include <iostream>
 
-class String {
+class String : public Serializable{
 	char* string;
 	size_t length;
 
@@ -52,6 +53,6 @@ public:
 
 	friend void getline(std::istream&, String&);
 
-	friend void serializeString(std::ostream&, const String&);
-	friend void deserializeString(std::istream&, String&);
+	virtual bool serialize(std::ostream& stream) const override;
+	virtual bool deserialize(std::istream& stream) override;
 };

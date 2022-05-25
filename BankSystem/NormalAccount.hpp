@@ -20,4 +20,12 @@ public:
 		stream << "Account type: normal" << std::endl;
 		Account::display(stream);
 	}
+
+	virtual bool serialize(std::ostream& stream) const override {
+		Account::serialize(stream);
+	}
+
+	virtual bool deserialize(std::istream& stream) override {
+		Account::deserialize(stream);
+	}
 };

@@ -157,17 +157,21 @@ void String::setString(const char* const str) {
 	strcpy(string, str);
 }
 
-void serializeString(std::ostream& o, const String& str) {
-	o.write((const char*)&str.length, sizeof(str.length));
-	o.write((const char*)str.string, str.length);
+bool String::serialize(std::ostream& stream) const{
+	stream.write((const char*)&length, sizeof(length));
+	stream.write((const char*)string, length);
+
+	return stream.good();
 }
 
-void deserializeString(std::istream& i, String& str) {
-	i.read((char*)&str.length, sizeof(str.length));
-	char* temp = new char[str.length + 1];
-	i.read(temp, str.length);
-	temp[str.length] = '\0';
-	str.string = temp;
+bool String::deserialize(std::istream& stream){
+	stream.read((char*)&length, sizeof(length));
+	char* temp = new char[length + 1];
+	stream.read(temp, length);
+	temp[length] = '\0';
+	string = temp;
+
+	return stream.good();
 }
 
 const char& String::operator[](size_t index) const {
@@ -276,14 +280,14 @@ bool String::isAlphaNumeric() const {
 	return true;
 }
 
-explicit String::String(char c) {
+String::String(char c) {
 	length = 1;
 	string = new char[length + 1];
 	string[0] = c;
 	string[1] = '\0';
 }
 
-explicit String::String(size_t num) {
+String::String(size_t num) {
 	length = getNumberDigitsCount(num);
 	string = new char[length + 1];
 	size_t i = length;

@@ -4,7 +4,7 @@
 const size_t daysOfMonth[] = { 31, 28, 31, 30, 31, 30,
 								  31, 31, 30, 31, 30, 31 };
 
-class Date {
+class Date : public Serializable {
 	size_t year;
 	size_t month;
 	size_t day;
@@ -56,6 +56,20 @@ public:
 
 	static Date now() {
 		return Date(time(0));
+	}
+
+	virtual bool serialize(std::ostream& stream) const override {
+		serializePrimitive(stream, year);
+		serializePrimitive(stream, month);
+		serializePrimitive(stream, day);
+		serializePrimitive(stream, bc);
+	}
+
+	virtual bool deserialize(std::istream& stream) override {
+		deserializePrimitive(stream, year);
+		deserializePrimitive(stream, month);
+		deserializePrimitive(stream, day);
+		deserializePrimitive(stream, bc);
 	}
 
 	friend std::ostream& operator<<(std::ostream& stream, const Date& dt);

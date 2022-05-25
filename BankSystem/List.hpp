@@ -3,7 +3,7 @@
 #define RESIZE_FACTOR 2
 
 template <typename T>
-class List {
+class List : public Serializable {
 	T* data;
 	size_t capacity;
 	size_t count;
@@ -32,6 +32,39 @@ public:
 
 	T& operator[](size_t index)const {
 		return at(index);
+	}
+
+	virtual bool serialize(std::ostream& stream) const override {
+		Serializable* ser = dynamic_cast<Serializable*>(&T());
+		if (ser == nullptr) {
+			return false;
+		}
+
+		serializePrimitive(stream,capacity);
+		serializePrimitive(stream, count);
+
+		for (size_t i = 0; i < count; i++)
+		{
+			ser = dynamic_cast<Serializable*>(&data[i]);
+			ser->serialize(stream);
+		}
+	}
+
+	virtual bool deserialize(std::istream& stream) override {
+		Serializable* ser = dynamic_cast<Serializable*>(&T());
+		if (ser == nullptr) {
+			return false;
+		}
+
+		deserializePrimitive(stream, capacity);
+		deserializePrimitive(stream, count);
+
+		data = new T[capacity];
+		for (size_t i = 0; i < count; i++)
+		{
+			ser = dynamic_cast<Serializable*>(&data[i]);
+			ser->deserialize(stream);
+		}
 	}
 
 };

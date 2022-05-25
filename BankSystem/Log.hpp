@@ -1,8 +1,9 @@
 #pragma once
-#include "DateTime.hpp"
 #include "TransactType.hpp"
+#include "DateTime.hpp"
+#include "Common.hpp"
 
-class Log {
+class Log :public Serializable{
 	DateTime time;
 	TransactType transactType;
 	String description;
@@ -17,6 +18,22 @@ public:
 	{}
 
 	void print(std::ostream& stream) const {
-		stream << "[ " << time << " ] [ " << transactType << " ] {" << relatedUserId << "} " << description << std::endl;
+		stream << "[ " << time << " ] [ " <<
+			transactTypeToString(transactType) << " ] {" << relatedUserId << "} " <<
+			description << std::endl;
+	}
+
+	virtual bool serialize(std::ostream& stream) const override {
+		time.serialize(stream);
+		serializePrimitive(stream, transactType);
+		description.serialize(stream);
+		serializePrimitive(stream, relatedUserId);
+	}
+
+	virtual bool deserialize(std::istream& stream) override {
+		time.deserialize(stream);
+		deserializePrimitive(stream, transactType);
+		description.deserialize(stream);
+		deserializePrimitive(stream, relatedUserId);
 	}
 };
