@@ -11,7 +11,7 @@ class Date : public Serializable {
 	bool bc;
 
 public:
-	Date(time_t dateTime): year(1970),month(0),day(0),bc(false) {
+	Date(time_t dateTime) : year(1970), month(0), day(0), bc(false) {
 
 		time_t daysTillNow = dateTime / (24 * 60 * 60);
 
@@ -48,7 +48,7 @@ public:
 		else {
 			if (month == 2 && leapYear)
 				day = 29;
-			else {
+			else if (month >= 1) {
 				day = daysOfMonth[month - 1];
 			}
 		}

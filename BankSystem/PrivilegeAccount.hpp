@@ -5,6 +5,16 @@ class PrivilegeAccount :public Account {
 	double overdraft;
 
 public:
+	PrivilegeAccount() :Account(),overdraft(0) {}
+
+	PrivilegeAccount(const String& username,
+		const String& password,
+		const String& iban,
+		size_t userId,
+		double overdraft,
+		double amount = 0) :
+		Account(username, password, iban, userId, amount),overdraft(overdraft) {}
+
 	virtual bool withdraw(double amount)override {
 		if (amount < 0) {
 			return false;

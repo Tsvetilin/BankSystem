@@ -17,7 +17,7 @@ protected:
 public:
 	Account() :Account("", "", "", 0) {}
 
-	Account(String username, String password, String iban, size_t userId, double amount = 0) :
+	Account(const String& username, const String& password, const String& iban, size_t userId, double amount = 0) :
 		username(username),
 		password(password),
 		iban(iban),
@@ -47,6 +47,10 @@ public:
 		return balance;
 	}
 
+	size_t getCustomerId() const {
+		return userId;
+	}
+
 	virtual bool serialize(std::ostream& stream) const override {
 		dateOfCreation.serialize(stream);
 		serializePrimitive(stream,userId);
@@ -62,4 +66,10 @@ public:
 	}
 
 	virtual ~Account() {}
+
+	friend bool matchIban(Account* const& account, const String& iban);
 };
+
+bool matchIban(Account* const& account, const String& iban) {
+	return account->iban == iban;
+}

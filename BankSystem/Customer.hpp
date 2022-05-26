@@ -10,8 +10,8 @@ private:
 	String address;
 
 public:
-	Customer(const String& name, const String& address):id(idGenerator++),name(name),address(address){}
-
+	Customer():Customer("",""){}
+	Customer(const String& name, const String& address) :id(idGenerator++), name(name), address(address) {}
 
 	virtual bool serialize(std::ostream& stream) const override {
 		serializePrimitive(stream, id);
@@ -24,4 +24,22 @@ public:
 		name.deserialize(stream);
 		address.deserialize(stream);
 	}
+
+	size_t getId()const {
+		return id;
+	}
+
+	void print(std::ostream& stream) {
+		stream << "Customer #" << id << " : " << name << " - address: " << address << std::endl;
+	}
+
+	friend bool matchCustomerId(Customer* const& customer, const size_t& id);
+	friend bool matchCustomerName(Customer* const& customer, const String& name);
 };
+
+bool matchCustomerId(Customer* const& customer, const size_t& id) {
+	return customer->id == id;
+}
+bool matchCustomerName(Customer* const& customer, const String& name) {
+	return customer->name == name;
+}

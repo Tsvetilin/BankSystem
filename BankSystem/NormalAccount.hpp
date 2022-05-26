@@ -3,11 +3,20 @@
 
 class NormalAccount :public Account {
 public:
+	NormalAccount() :Account() {}
+
+	NormalAccount(const String& username, 
+		const String& password,
+		const String& iban, 
+		size_t userId,
+		double amount = 0) :
+		Account(username, password, iban, userId, amount) {}
+
 	virtual bool withdraw(double amount) override {
 		if (amount < 0) {
 			return false;
 		}
-		
+
 		if (balance - amount < 0) {
 			return false;
 		}

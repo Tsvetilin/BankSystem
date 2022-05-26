@@ -21,6 +21,10 @@ public:
 	List& operator= (List&& other);
 
 	bool contains(const T& element) const;
+
+	template<typename K>
+	int getIndexByPredicate(bool predicate(const T&, const K&), const K& value) const;
+
 	void add(const T& element);
 	void remove(const T& element);
 	void removeAt(size_t index);
@@ -40,7 +44,7 @@ public:
 			return false;
 		}
 
-		serializePrimitive(stream,capacity);
+		serializePrimitive(stream, capacity);
 		serializePrimitive(stream, count);
 
 		for (size_t i = 0; i < count; i++)
@@ -182,7 +186,6 @@ void List<T>::removeAt(size_t index) {
 	}
 }
 
-
 template <typename T>
 bool List<T>::contains(const T& element)const {
 	for (size_t i = 0; i < count; i++)
@@ -193,6 +196,19 @@ bool List<T>::contains(const T& element)const {
 	}
 
 	return false;
+}
+
+template <typename T>
+template<typename K>
+int List<T>::getIndexByPredicate(bool predicate(const T&, const K&), const K& value) const {
+	for (size_t i = 0; i < count; i++)
+	{
+		if (predicate(data[i], value)) {
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 template <typename T>

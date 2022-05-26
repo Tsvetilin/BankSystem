@@ -3,16 +3,18 @@
 #include "DateTime.hpp"
 #include "Common.hpp"
 
-class Log :public Serializable{
+class Log :public Serializable {
 	DateTime time;
 	TransactType transactType;
 	String description;
 	size_t relatedUserId;
 
 public:
-	Log(TransactType transactType, String description, size_t userId) : 
-		transactType(transactType), 
-		description(description), 
+	Log() :Log(TransactType::Unknown, "", -1) {}
+
+	Log(TransactType transactType, String description, size_t userId) :
+		transactType(transactType),
+		description(description),
 		relatedUserId(userId),
 		time(DateTime::now())
 	{}
@@ -37,3 +39,8 @@ public:
 		deserializePrimitive(stream, relatedUserId);
 	}
 };
+
+std::ostream& operator<<(std::ostream& stream, const Log& log) {
+	log.print(stream);
+	return stream;
+}

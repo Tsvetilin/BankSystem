@@ -29,7 +29,7 @@ int charToInt(char c) {
 }
 
 char digitToChar(size_t c) {
-	return (c + '0');
+	return (char)('0' + c);
 }
 
 size_t getNumberDigitsCount(size_t num) {
@@ -65,7 +65,7 @@ bool validateIban(String iban)
 	}
 
 	int checksum = charToInt(checksumString[0]);
-	for (int i = 1; i < checksumString.getLength(); i++)
+	for (size_t i = 1; i < checksumString.getLength(); i++)
 	{
 		checksum *= 10;
 		checksum += charToInt(checksumString[i]);

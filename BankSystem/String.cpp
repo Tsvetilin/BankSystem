@@ -244,7 +244,7 @@ void String::removeWhitespace() {
 		}
 	}
 
-	newString[ind] = '\0';
+	newString[length - countSpaces] = '\0';
 
 	delete[] string;
 	string = newString;
