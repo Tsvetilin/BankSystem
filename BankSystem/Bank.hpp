@@ -13,6 +13,22 @@ class Bank : public Serializable {
 	List<Account*> accounts;
 	List<Log> logs;
 
+	void printAccountsForCustomer(std::ostream& stream, size_t customerId) const {
+		for (size_t i = 0; i < accounts.getCount(); i++)
+		{
+			if (accounts[i]->getCustomerId() == customerId) {
+				accounts[i]->display(stream);
+			}
+		}
+	}
+
+	void printLogs(std::ostream& stream) const {
+		for (size_t i = 0; i < logs.getCount(); i++)
+		{
+			stream << logs[i] << std::endl;
+		}
+	}
+
 	void free() {
 		for (size_t i = 0; i < accounts.getCount(); i++)
 		{
@@ -25,7 +41,7 @@ class Bank : public Serializable {
 		}
 	}
 
-	Account* cloneAccount(Account* account) {
+	Account* cloneAccount(Account* account) const {
 		if (PrivilegeAccount* acc = dynamic_cast<PrivilegeAccount*>(account)) {
 			return new PrivilegeAccount(*acc);
 		}
@@ -41,7 +57,7 @@ class Bank : public Serializable {
 	}
 
 	Account* instantiateAccount(size_t userId, const String& iban, const String& username,
-		const String& password, AccountType type, double amount, double param = 0) {
+		const String& password, AccountType type, double amount, double param = 0) const {
 		if (type == AccountType::Normal) {
 			return new NormalAccount(username, password, iban, userId, amount);
 		}
@@ -56,7 +72,7 @@ class Bank : public Serializable {
 		}
 	}
 
-	Account* instantiateAccount(AccountType type) {
+	Account* instantiateAccount(AccountType type) const {
 		if (type == AccountType::Normal) {
 			return new NormalAccount();
 		}
@@ -175,13 +191,8 @@ public:
 			return false;
 		}
 
-		for (size_t i = 0; i < logs.getCount(); i++)
-		{
-			file << logs[i] << std::endl;
-		}
-
+		printLogs(file);
 		file.close();
-
 		return file.good();
 	}
 
@@ -198,6 +209,25 @@ public:
 
 		return accounts[indexFrom]->withdraw(amount) && accounts[indexTo]->deposit(amount);
 	}
+
+	bool withdraw(const String& fromIban, double amount) {
+		int indexFrom = accounts.getIndexByPredicate(matchIban, fromIban);
+		if (indexFrom == -1) {
+			return false;
+		}
+
+		return accounts[indexFrom]->withdraw(amount);
+	}
+
+	bool deposit(const String& toIban, double amount) {
+		int indexTo = accounts.getIndexByPredicate(matchIban, toIban);
+		if (indexTo == -1) {
+			return false;
+		}
+
+		return accounts[indexTo]->deposit(amount);
+	}
+
 
 	void display(std::ostream& stream) const {
 		stream << "Bank: " << name << std::endl;
@@ -220,22 +250,28 @@ public:
 		}
 	}
 
-	void listCustomerAccount(std::ostream& stream, size_t customerId) const {
-		for (size_t i = 0; i < accounts.getCount(); i++)
-		{
-			if (accounts[i]->getCustomerId() == customerId) {
-				accounts[i]->display(stream);
-			}
+	bool listCustomerAccount(std::ostream& stream, size_t customerId) const {
+		int index = customers.getIndexByPredicate(matchCustomerId, customerId);
+		if (index == -1) {
+			return false;
 		}
+		
+		printAccountsForCustomer(stream,customerId);
+		return true;
 	}
 
-	void listCustomerAccount(std::ostream& stream, const String& customerName) const {
-		int index = customers.getIndexByPredicate(matchCustomerName,customerName);
+	bool listCustomerAccount(std::ostream& stream, const String& customerName) const {
+		int index = customers.getIndexByPredicate(matchCustomerName, customerName);
 		if (index == -1) {
-			return;
+			return false;
 		}
 
-		listCustomerAccount(stream, customers[index]->getId());
+		printAccountsForCustomer(stream, customers[index]->getId());
+		return true;
+	}
+
+	void listLogs(std::ostream& stream) const {
+		printLogs(stream);
 	}
 
 	virtual void serialize(std::ostream& stream) const override {
@@ -327,7 +363,7 @@ public:
 		try {
 			serialize(file);
 		}
-		catch(...){
+		catch (...) {
 			file.close();
 			return false;
 		}

@@ -15,7 +15,8 @@ class BankSystem :public App<Bank> {
 			"2. List" << std::endl <<
 			"3. Action" << std::endl <<
 			"4. Display info for the bank" << std::endl <<
-			"5. Quit" << std::endl;
+			"5. Export log" << std::endl <<
+			"6. Quit" << std::endl;
 	}
 
 	void printEditMenu(std::ostream& outputStream) {
@@ -87,7 +88,24 @@ class BankSystem :public App<Bank> {
 	}
 
 	AccountType readAccountType(std::ostream& outputStream, std::istream& inputStream) {
+		outputStream <<
+			"1. Normal account" << std::endl <<
+			"2. Savings account" << std::endl <<
+			"3. Privilege account" << std::endl;
+		while (true) {
+			size_t input = parseToUInt(getline(inputStream));
+			switch (input)
+			{
+			case 1: return AccountType::Normal;
+			case 2: return AccountType::Savings;
+			case 3: return AccountType::Privilege;
+			default:
+				outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+				break;
+			}
+		}
 
+		return AccountType::Unknown;
 	}
 
 	void handleAccountEdit(std::ostream& outputStream, std::istream& inputStream) {
@@ -184,20 +202,114 @@ class BankSystem :public App<Bank> {
 	}
 
 	void handleList(std::ostream& outputStream, std::istream& inputStream) {
+		printListMenu(outputStream);
+		String input;
 
+		while (true) {
+			outputStream << ">>";
+			input = std::move(getline(inputStream));
+			size_t option = parseToUInt(input);
+
+			switch (option)
+			{
+			case 1: {
+				bank.listCustomers(outputStream);
+				return;
+			}
+			case 2: {
+				bank.listAccounts(outputStream);
+				return;
+			}
+			case 3: {
+				outputStream << "Customer id: ";
+				size_t id = parseToUInt(getline(inputStream));
+				if (!bank.listCustomerAccount(outputStream, id)) {
+					outputStream << "Error! Customer not found!" << std::endl;
+				}
+				return;
+			}
+			case 4: {
+				bank.listLogs(outputStream);
+				return;
+			}
+			default:
+				outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+				break;
+			}
+		}
 	}
 
 	void handleAction(std::ostream& outputStream, std::istream& inputStream) {
+		printActionMenu(outputStream);
+		String input;
 
+		while (true) {
+			outputStream << ">>";
+			input = std::move(getline(inputStream));
+			size_t option = parseToUInt(input);
+
+			switch (option)
+			{
+			case 1: {
+				outputStream << "Iban: ";
+				String iban = std::move(getline(inputStream));
+				outputStream << "Amount: ";
+				double amount = parseToDouble(getline(inputStream));
+				if (!bank.withdraw(iban, amount)) {
+					outputStream << "Operation failed! Insufficient amount, denied permissions or invalid iban!" << std::endl;
+				}
+				else {
+					outputStream << "Money successfully withdrawn!" << std::endl;
+				}
+
+				return;
+			}
+			case 2: {
+				outputStream << "Iban: ";
+				String iban = std::move(getline(inputStream));
+				outputStream << "Amount: ";
+				double amount = parseToDouble(getline(inputStream));
+				if (!bank.deposit(iban, amount)) {
+					outputStream << "Invalid iban!" << std::endl;
+				}
+				else {
+					outputStream << "Money successfully deposited!" << std::endl;
+				}
+
+				return;
+			}
+			case 3: {
+				outputStream << "Iban from: ";
+				String ibanFrom = std::move(getline(inputStream));
+				outputStream << "Iban to: ";
+				String ibanTo = std::move(getline(inputStream));
+				outputStream << "Amount: ";
+				double amount = parseToDouble(getline(inputStream));
+				if (!bank.transfer(ibanFrom, ibanTo, amount)) {
+					outputStream << "Operation failed! Insufficient amount, denied permissions or invalid iban!" << std::endl;
+				}
+				else {
+					outputStream << "Money successfully transferred!" << std::endl;
+				}
+
+				return;
+			}
+			default:
+				outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+				break;
+			}
+		}
 	}
 
 public:
+	BankSystem() :bank(*(Bank*)nullptr) {}
+
 	virtual void Run(Bank& bank,
 		std::ostream& outputStream,
 		std::istream& inputSteam,
 		const String& databasePath = DEFAULT_DATABASE_PATH) override {
 
-		this->bank = bank;
+		this->bank = *&bank;
 		String input;
 
 		if (!bank.readDatabase(databasePath)) {
@@ -239,6 +351,16 @@ public:
 				break;
 			}
 			case 5: {
+				outputStream << "Log file path: ";
+				if (!bank.exportLog(getline(inputSteam))) {
+					outputStream << "Error exporting log. Proccess terminated!" << std::endl;
+				}
+				else {
+					outputStream << "Log exported successfully." << std::endl;
+				}
+				break;
+			}
+			case 6: {
 				outputStream << "Closing the bank system..." << std::endl;
 				if (!bank.saveDatabase(databasePath)) {
 					outputStream << "Error saving database. Proccess terminated!" << std::endl;
@@ -255,25 +377,3 @@ public:
 
 	}
 };
-
-/*
-1. Edit
-a. Customer
-i. Add new customer
-ii. Delete customer
-b. Account
-i. Add new account
-ii. Delete account
-2. List
-a. List all customers
-b. List all accounts
-c. List customer account
-d. List log
-3. Action
-a. Withdraw from account
-b. Deposit to account
-c. Transfer
-4. Display info for the bank
-5. Quit
-
-*/
