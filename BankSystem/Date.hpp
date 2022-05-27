@@ -58,14 +58,14 @@ public:
 		return Date(time(0));
 	}
 
-	virtual bool serialize(std::ostream& stream) const override {
+	virtual void serialize(std::ostream& stream) const override {
 		serializePrimitive(stream, year);
 		serializePrimitive(stream, month);
 		serializePrimitive(stream, day);
 		serializePrimitive(stream, bc);
 	}
 
-	virtual bool deserialize(std::istream& stream) override {
+	virtual void deserialize(std::istream& stream) override {
 		deserializePrimitive(stream, year);
 		deserializePrimitive(stream, month);
 		deserializePrimitive(stream, day);
@@ -78,6 +78,7 @@ public:
 
 std::ostream& operator<<(std::ostream& stream, const Date& dt) {
 	stream << (dt.bc ? "BC" : "") << dt.day << "/" << dt.month << "/" << dt.year;
+	return stream;
 }
 
 

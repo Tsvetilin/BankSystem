@@ -15,12 +15,12 @@ public:
 		return DateTime(Date::now(), Time::now());
 	}
 
-	virtual bool serialize(std::ostream& stream) const override {
+	virtual void serialize(std::ostream& stream) const override {
 		time.serialize(stream);
 		date.serialize(stream);
 	}
 
-	virtual bool deserialize(std::istream& stream) override {
+	virtual void deserialize(std::istream& stream) override {
 		time.deserialize(stream);
 		date.deserialize(stream);
 	}
@@ -31,4 +31,5 @@ public:
 
 std::ostream& operator<<(std::ostream& stream, const DateTime& dt) {
 	stream << dt.date << " " << dt.time;
+	return stream;
 }

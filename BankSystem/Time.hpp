@@ -19,14 +19,14 @@ public:
 		return Time(time(0));
 	}
 
-	virtual bool serialize(std::ostream& stream) const override {
+	virtual void serialize(std::ostream& stream) const override {
 		serializePrimitive(stream, hour);
 		serializePrimitive(stream, minute);
 		serializePrimitive(stream, second);
 		serializePrimitive(stream, nanosec);
 	}
 
-	virtual bool deserialize(std::istream& stream) override {
+	virtual void deserialize(std::istream& stream) override {
 		deserializePrimitive(stream, hour);
 		deserializePrimitive(stream, minute);
 		deserializePrimitive(stream, second);
@@ -38,4 +38,5 @@ public:
 
 std::ostream& operator<<(std::ostream& stream, const Time& dt) {
 	stream << dt.hour << ":" << dt.minute << ":" << dt.second;
+	return stream;
 }

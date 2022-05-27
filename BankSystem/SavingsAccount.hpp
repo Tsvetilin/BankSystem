@@ -15,7 +15,7 @@ public:
 		double amount = 0) :
 		Account(username, password, iban, userId, amount), interestRate(interestRate) {}
 
-	virtual bool withdraw(double)override {
+	virtual bool withdraw(double) override {
 		return false;
 	}
 
@@ -24,13 +24,12 @@ public:
 		Account::display(stream);
 	}
 
-
-	virtual bool serialize(std::ostream& stream) const override {
+	virtual void serialize(std::ostream& stream) const override {
 		Account::serialize(stream);
 		serializePrimitive(stream, interestRate);
 	}
 
-	virtual bool deserialize(std::istream& stream) override {
+	virtual void deserialize(std::istream& stream) override {
 		Account::deserialize(stream);
 		deserializePrimitive(stream, interestRate);
 	}

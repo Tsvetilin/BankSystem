@@ -69,7 +69,7 @@ bool validateIban(String iban)
 	{
 		checksum *= 10;
 		checksum += charToInt(checksumString[i]);
-		checksum %= 97;
+		checksum %= 'a';
 	}
 
 	return checksum == 1;
@@ -84,4 +84,36 @@ void serializePrimitive(std::ostream& o, const T& data) {
 template<typename T>
 void deserializePrimitive(std::istream& i, const T& data) {
 	i.read((char*)&data, sizeof(data));
+}
+
+
+size_t parseToUInt(const String& input) {
+	size_t index = 0;
+	size_t result = 0;
+
+	while (input[index] == ' ') {
+		if (input[index] == '\0') {
+			return 0;
+		}
+		++index;
+	}
+
+	while (isDigit(input[index])) {
+		result += input[index] - '0';
+		++index;
+	}
+
+	if (input[index] != ' ' && input[index] != '\0') {
+		return 0;
+	}
+
+	return result;
+}
+
+double parseToDouble(const String& str) {
+	size_t intPart=0;
+	size_t floatingPart=0;
+	size_t floatingLength=0;
+
+	return (double)floatingPart / pow(floatingLength, 10) + intPart;
 }

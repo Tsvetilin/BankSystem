@@ -30,11 +30,11 @@ public:
 		Account::display(stream);
 	}
 
-	virtual bool serialize(std::ostream& stream) const override {
+	virtual void serialize(std::ostream& stream) const override {
 		Account::serialize(stream);
 	}
 
-	virtual bool deserialize(std::istream& stream) override {
+	virtual void deserialize(std::istream& stream) override {
 		Account::deserialize(stream);
 	}
 };

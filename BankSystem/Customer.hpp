@@ -1,5 +1,6 @@
 #pragma once
 #include "String.hpp"
+#include "common.hpp"
 
 class Customer : public Serializable {
 	static size_t idGenerator;
@@ -10,16 +11,25 @@ private:
 	String address;
 
 public:
+
+	static void serializeGenerator(std::ostream& stream){
+		serializePrimitive(stream, idGenerator);
+	}
+
+	static void deserializeGenerator(std::istream& stream) {
+		deserializePrimitive(stream, idGenerator);
+	}
+
 	Customer():Customer("",""){}
 	Customer(const String& name, const String& address) :id(idGenerator++), name(name), address(address) {}
 
-	virtual bool serialize(std::ostream& stream) const override {
+	virtual void serialize(std::ostream& stream) const override {
 		serializePrimitive(stream, id);
 		name.serialize(stream);
 		address.serialize(stream);
 	}
 
-	virtual bool deserialize(std::istream& stream) override {
+	virtual void deserialize(std::istream& stream) override {
 		deserializePrimitive(stream, id);
 		name.deserialize(stream);
 		address.deserialize(stream);
@@ -43,3 +53,5 @@ bool matchCustomerId(Customer* const& customer, const size_t& id) {
 bool matchCustomerName(Customer* const& customer, const String& name) {
 	return customer->name == name;
 }
+
+size_t Customer::idGenerator = 1;

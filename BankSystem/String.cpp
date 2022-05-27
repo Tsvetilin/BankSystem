@@ -146,8 +146,14 @@ bool String::operator!=(const String& other) const
 
 void getline(std::istream& i, String& str) {
 	char buff[BUFF_LENGTH];
-	std::cin.getline(buff, BUFF_LENGTH);
+	i.getline(buff, BUFF_LENGTH);
 	str.setString(buff);
+}
+
+String getline(std::istream& i) {
+	char buff[BUFF_LENGTH];
+	i.getline(buff, BUFF_LENGTH);
+	return String(buff);
 }
 
 void String::setString(const char* const str) {
@@ -157,21 +163,17 @@ void String::setString(const char* const str) {
 	strcpy(string, str);
 }
 
-bool String::serialize(std::ostream& stream) const{
+void String::serialize(std::ostream& stream) const{
 	stream.write((const char*)&length, sizeof(length));
 	stream.write((const char*)string, length);
-
-	return stream.good();
 }
 
-bool String::deserialize(std::istream& stream){
+void String::deserialize(std::istream& stream){
 	stream.read((char*)&length, sizeof(length));
 	char* temp = new char[length + 1];
 	stream.read(temp, length);
 	temp[length] = '\0';
 	string = temp;
-
-	return stream.good();
 }
 
 const char& String::operator[](size_t index) const {
@@ -213,6 +215,7 @@ String::String(String&& other) noexcept {
 	length = other.length;
 	other.string = nullptr;
 }
+
 String& String::operator=(String&& other) noexcept {
 	delete[] string;
 	string = other.string;

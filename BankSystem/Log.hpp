@@ -12,7 +12,7 @@ class Log :public Serializable {
 public:
 	Log() :Log(TransactType::Unknown, "", -1) {}
 
-	Log(TransactType transactType, String description, size_t userId) :
+	Log(TransactType transactType, const String& description, size_t userId) :
 		transactType(transactType),
 		description(description),
 		relatedUserId(userId),
@@ -25,14 +25,14 @@ public:
 			description << std::endl;
 	}
 
-	virtual bool serialize(std::ostream& stream) const override {
+	virtual void serialize(std::ostream& stream) const override {
 		time.serialize(stream);
 		serializePrimitive(stream, transactType);
 		description.serialize(stream);
 		serializePrimitive(stream, relatedUserId);
 	}
 
-	virtual bool deserialize(std::istream& stream) override {
+	virtual void deserialize(std::istream& stream) override {
 		time.deserialize(stream);
 		deserializePrimitive(stream, transactType);
 		description.deserialize(stream);

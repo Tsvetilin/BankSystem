@@ -51,14 +51,18 @@ public:
 		return userId;
 	}
 
-	virtual bool serialize(std::ostream& stream) const override {
+	virtual void serialize(std::ostream& stream) const override {
+		iban.serialize(stream);
+		serializePrimitive(stream, balance);
 		dateOfCreation.serialize(stream);
 		serializePrimitive(stream,userId);
 		username.serialize(stream);
 		password.serialize(stream);
 	}
 
-	virtual bool deserialize(std::istream& stream) override {
+	virtual void deserialize(std::istream& stream) override {
+		iban.deserialize(stream);
+		deserializePrimitive(stream, balance);
 		dateOfCreation.deserialize(stream);
 		deserializePrimitive(stream, userId);
 		username.deserialize(stream);

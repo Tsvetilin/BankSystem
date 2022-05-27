@@ -53,6 +53,8 @@ public:
 
 	friend void getline(std::istream&, String&);
 
-	virtual bool serialize(std::ostream& stream) const override;
-	virtual bool deserialize(std::istream& stream) override;
+	virtual void serialize(std::ostream& stream) const override;
+	virtual void deserialize(std::istream& stream) override;
 };
+
+String getline(std::istream&);

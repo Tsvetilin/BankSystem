@@ -119,6 +119,14 @@ public:
 		free();
 	}
 
+	void setName(const String& name) {
+		this->name = name;
+	}
+
+	void setAddress(const String& address) {
+		this->address = address;
+	}
+
 	bool addCustomer(const String& name, const String& address) {
 		customers.add(new Customer(name, address));
 		return true;
@@ -230,10 +238,11 @@ public:
 		listCustomerAccount(stream, customers[index]->getId());
 	}
 
-	virtual bool serialize(std::ostream& stream) const override {
+	virtual void serialize(std::ostream& stream) const override {
 		name.serialize(stream);
 		address.serialize(stream);
 
+		Customer::serializeGenerator(stream);
 		serializePrimitive(stream, customers.getCount());
 		for (size_t i = 0; i < customers.getCount(); i++)
 		{
@@ -254,10 +263,11 @@ public:
 		}
 	}
 
-	virtual bool deserialize(std::istream& stream) override {
+	virtual void deserialize(std::istream& stream) override {
 		name.deserialize(stream);
 		address.deserialize(stream);
 
+		Customer::deserializeGenerator(stream);
 		size_t customersCount = 0;
 		deserializePrimitive(stream, customersCount);
 		for (size_t i = 0; i < customersCount; i++)
@@ -286,5 +296,47 @@ public:
 			account->deserialize(stream);
 			accounts.add(account);
 		}
+	}
+
+	bool readDatabase(const String& path) {
+		std::ifstream file(path.c_str());
+		if (!file.is_open()) {
+			return false;
+		}
+
+		try {
+			deserialize(file);
+		}
+		catch (...) {
+			file.close();
+			*this = Bank();
+			return false;
+		}
+
+		file.close();
+		return true;
+	}
+
+	bool saveDatabase(const String& path) {
+		std::ofstream file(path.c_str());
+
+		if (!file.is_open()) {
+			return false;
+		}
+
+		try {
+			serialize(file);
+		}
+		catch(...){
+			file.close();
+			return false;
+		}
+
+		file.close();
+		return true;
+	}
+
+	bool customerExists(size_t customerId) const {
+		return customers.getIndexByPredicate(matchCustomerId, customerId) != -1;
 	}
 };
