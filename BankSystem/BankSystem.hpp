@@ -7,8 +7,19 @@ const String DEFAULT_ERROR_MESSAGE = "Error, something went wrong! Invalid comma
 
 class BankSystem :public App<Bank> {
 
-	Bank& bank;
+	Bank* bank;
 
+	size_t getNumerInputInRange(std::ostream& outputStream, std::istream& inputStream, size_t lowerBound, size_t upperBound) {
+		size_t option = 0;
+		while (true) {
+			outputStream << ">>";
+			size_t option = parseToUInt(getline(inputStream));
+			if (option >= lowerBound && option <= upperBound) {
+				return option;
+			}
+			outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+		}
+	}
 	void printMainMenu(std::ostream& outputStream) {
 		outputStream <<
 			"1. Edit" << std::endl <<
@@ -49,41 +60,38 @@ class BankSystem :public App<Bank> {
 	void handleCustomerEdit(std::ostream& outputStream, std::istream& inputStream) {
 		printEditOptionMenu(outputStream);
 
-		while (true) {
-			outputStream << ">>";
-			size_t option = parseToUInt(getline(inputStream));
-			switch (option)
-			{
-			case 1: {
-				outputStream << "Customer name: ";
-				String name = std::move(getline(inputStream));
-				outputStream << "Customer address: ";
-				String address = std::move(getline(inputStream));
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 2);
+		switch (option)
+		{
+		case 1: {
+			outputStream << "Customer name: ";
+			String name = std::move(getline(inputStream));
+			outputStream << "Customer address: ";
+			String address = std::move(getline(inputStream));
 
-				if (!bank.addCustomer(name, address)) {
-					outputStream << "Error creating customer!";
-				}
-				else {
-					outputStream << "Successfully created customer!";
-				}
-				return;
+			if (!bank->addCustomer(name, address)) {
+				outputStream << "Error creating customer!";
 			}
-			case 2: {
-				outputStream << "Customer id: ";
-				String id = std::move(getline(inputStream));
+			else {
+				outputStream << "Successfully created customer!";
+			}
+			return;
+		}
+		case 2: {
+			outputStream << "Customer id: ";
+			String id = std::move(getline(inputStream));
 
-				if (!bank.deleteCustomer(parseToUInt(id))) {
-					outputStream << "Error deleting customer! No id match!";
-				}
-				else {
-					outputStream << "Successfully deleted customer!";
-				}
-				return;
+			if (!bank->deleteCustomer(parseToUInt(id))) {
+				outputStream << "Error deleting customer! No id match!";
 			}
-			default:
-				outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
-				break;
+			else {
+				outputStream << "Successfully deleted customer!";
 			}
+			return;
+		}
+		default:
+			outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+			break;
 		}
 	}
 
@@ -92,17 +100,16 @@ class BankSystem :public App<Bank> {
 			"1. Normal account" << std::endl <<
 			"2. Savings account" << std::endl <<
 			"3. Privilege account" << std::endl;
-		while (true) {
-			size_t input = parseToUInt(getline(inputStream));
-			switch (input)
-			{
-			case 1: return AccountType::Normal;
-			case 2: return AccountType::Savings;
-			case 3: return AccountType::Privilege;
-			default:
-				outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
-				break;
-			}
+
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 3);
+		switch (option)
+		{
+		case 1: return AccountType::Normal;
+		case 2: return AccountType::Savings;
+		case 3: return AccountType::Privilege;
+		default:
+			outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+			break;
 		}
 
 		return AccountType::Unknown;
@@ -111,227 +118,202 @@ class BankSystem :public App<Bank> {
 	void handleAccountEdit(std::ostream& outputStream, std::istream& inputStream) {
 		printEditOptionMenu(outputStream);
 
-		while (true) {
-			outputStream << ">>";
-			size_t option = parseToUInt(getline(inputStream));
-			switch (option)
-			{
-			case 1: {
-				outputStream << "Account username: ";
-				String username = std::move(getline(inputStream));
-				outputStream << "Account username: ";
-				String password = std::move(getline(inputStream));
 
-				outputStream << "Account iban: ";
-				String iban = std::move(getline(inputStream));
-				while (!validateIban(iban)) {
-					outputStream << "Invalid iban! Enter new: ";
-					iban = std::move(getline(inputStream));
-				}
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 2);
+		switch (option)
+		{
+		case 1: {
+			outputStream << "Account username: ";
+			String username = std::move(getline(inputStream));
+			outputStream << "Account username: ";
+			String password = std::move(getline(inputStream));
 
-				outputStream << "Customer id: ";
-				size_t userId = parseToUInt(getline(inputStream));
-				while (!bank.customerExists(userId)) {
-					outputStream << "Invalid customer id! Enter new: ";
-					userId = parseToUInt(getline(inputStream));
-				}
-
-				AccountType accountType = readAccountType(outputStream, inputStream);
-				double amount = parseToDouble(getline(inputStream));
-
-				double param = 0;
-				if (accountType == AccountType::Savings) {
-					outputStream << "Interest rate: ";
-					param = parseToDouble(getline(inputStream));
-				}
-				else if (accountType == AccountType::Privilege) {
-					outputStream << "Overdraft amount: ";
-					param = parseToDouble(getline(inputStream));
-				}
-
-				if (!bank.addAccount(userId, iban, username, password, accountType, amount, param)) {
-					outputStream << "Error creating account! Invalid arguments!";
-				}
-				else {
-					outputStream << "Successfully created account!";
-				}
-				return;
+			outputStream << "Account iban: ";
+			String iban = std::move(getline(inputStream));
+			while (!validateIban(iban)) {
+				outputStream << "Invalid iban! Enter new: ";
+				iban = std::move(getline(inputStream));
 			}
-			case 2: {
-				outputStream << "Account iban: ";
 
-				if (!bank.deleteAccount(getline(inputStream))) {
-					outputStream << "Error deleting account! No iban match!";
-				}
-				else {
-					outputStream << "Successfully deleted account!";
-				}
-				return;
+			outputStream << "Customer id: ";
+			size_t userId = parseToUInt(getline(inputStream));
+			while (!bank->customerExists(userId)) {
+				outputStream << "Invalid customer id! Enter new: ";
+				userId = parseToUInt(getline(inputStream));
 			}
-			default:
-				outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
-				break;
+
+			AccountType accountType = readAccountType(outputStream, inputStream);
+			double amount = parseToDouble(getline(inputStream));
+
+			double param = 0;
+			if (accountType == AccountType::Savings) {
+				outputStream << "Interest rate: ";
+				param = parseToDouble(getline(inputStream));
 			}
+			else if (accountType == AccountType::Privilege) {
+				outputStream << "Overdraft amount: ";
+				param = parseToDouble(getline(inputStream));
+			}
+
+			if (!bank->addAccount(userId, iban, username, password, accountType, amount, param)) {
+				outputStream << "Error creating account! Invalid arguments!";
+			}
+			else {
+				outputStream << "Successfully created account!";
+			}
+			return;
+		}
+		case 2: {
+			outputStream << "Account iban: ";
+
+			if (!bank->deleteAccount(getline(inputStream))) {
+				outputStream << "Error deleting account! No iban match!";
+			}
+			else {
+				outputStream << "Successfully deleted account!";
+			}
+			return;
+		}
+		default:
+			outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+			break;
 		}
 	}
 
 	void handleEdit(std::ostream& outputStream, std::istream& inputStream) {
 		printEditMenu(outputStream);
-		String input;
 
-		while (true) {
-			outputStream << ">>";
-			getline(inputStream, input);
-			size_t option = parseToUInt(input);
-
-			switch (option)
-			{
-			case 1: {
-				handleCustomerEdit(outputStream, inputStream);
-				return;
-			}
-			case 2: {
-				handleAccountEdit(outputStream, inputStream);
-				return;
-			}
-			default:
-				outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
-				break;
-			}
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 2);
+		switch (option)
+		{
+		case 1: {
+			handleCustomerEdit(outputStream, inputStream);
+			return;
+		}
+		case 2: {
+			handleAccountEdit(outputStream, inputStream);
+			return;
+		}
+		default:
+			outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+			break;
 		}
 	}
 
 	void handleList(std::ostream& outputStream, std::istream& inputStream) {
 		printListMenu(outputStream);
-		String input;
 
-		while (true) {
-			outputStream << ">>";
-			input = std::move(getline(inputStream));
-			size_t option = parseToUInt(input);
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 4);
 
-			switch (option)
-			{
-			case 1: {
-				bank.listCustomers(outputStream);
-				return;
+		switch (option)
+		{
+		case 1: {
+			bank->listCustomers(outputStream);
+			return;
+		}
+		case 2: {
+			bank->listAccounts(outputStream);
+			return;
+		}
+		case 3: {
+			outputStream << "Customer id: ";
+			size_t id = parseToUInt(getline(inputStream));
+			if (!bank->listCustomerAccount(outputStream, id)) {
+				outputStream << "Error! Customer not found!" << std::endl;
 			}
-			case 2: {
-				bank.listAccounts(outputStream);
-				return;
-			}
-			case 3: {
-				outputStream << "Customer id: ";
-				size_t id = parseToUInt(getline(inputStream));
-				if (!bank.listCustomerAccount(outputStream, id)) {
-					outputStream << "Error! Customer not found!" << std::endl;
-				}
-				return;
-			}
-			case 4: {
-				bank.listLogs(outputStream);
-				return;
-			}
-			default:
-				outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
-				break;
-			}
+			return;
+		}
+		case 4: {
+			bank->listLogs(outputStream);
+			return;
+		}
+		default:
+			outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+			break;
 		}
 	}
 
 	void handleAction(std::ostream& outputStream, std::istream& inputStream) {
 		printActionMenu(outputStream);
-		String input;
 
-		while (true) {
-			outputStream << ">>";
-			input = std::move(getline(inputStream));
-			size_t option = parseToUInt(input);
-
-			switch (option)
-			{
-			case 1: {
-				outputStream << "Iban: ";
-				String iban = std::move(getline(inputStream));
-				outputStream << "Amount: ";
-				double amount = parseToDouble(getline(inputStream));
-				if (!bank.withdraw(iban, amount)) {
-					outputStream << "Operation failed! Insufficient amount, denied permissions or invalid iban!" << std::endl;
-				}
-				else {
-					outputStream << "Money successfully withdrawn!" << std::endl;
-				}
-
-				return;
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 3);
+		switch (option)
+		{
+		case 1: {
+			outputStream << "Iban: ";
+			String iban = std::move(getline(inputStream));
+			outputStream << "Amount: ";
+			double amount = parseToDouble(getline(inputStream));
+			if (!bank->withdraw(iban, amount)) {
+				outputStream << "Operation failed! Insufficient amount, denied permissions or invalid iban!" << std::endl;
 			}
-			case 2: {
-				outputStream << "Iban: ";
-				String iban = std::move(getline(inputStream));
-				outputStream << "Amount: ";
-				double amount = parseToDouble(getline(inputStream));
-				if (!bank.deposit(iban, amount)) {
-					outputStream << "Invalid iban!" << std::endl;
-				}
-				else {
-					outputStream << "Money successfully deposited!" << std::endl;
-				}
+			else {
+				outputStream << "Money successfully withdrawn!" << std::endl;
+			}
 
-				return;
+			return;
+		}
+		case 2: {
+			outputStream << "Iban: ";
+			String iban = std::move(getline(inputStream));
+			outputStream << "Amount: ";
+			double amount = parseToDouble(getline(inputStream));
+			if (!bank->deposit(iban, amount)) {
+				outputStream << "Invalid iban!" << std::endl;
 			}
-			case 3: {
-				outputStream << "Iban from: ";
-				String ibanFrom = std::move(getline(inputStream));
-				outputStream << "Iban to: ";
-				String ibanTo = std::move(getline(inputStream));
-				outputStream << "Amount: ";
-				double amount = parseToDouble(getline(inputStream));
-				if (!bank.transfer(ibanFrom, ibanTo, amount)) {
-					outputStream << "Operation failed! Insufficient amount, denied permissions or invalid iban!" << std::endl;
-				}
-				else {
-					outputStream << "Money successfully transferred!" << std::endl;
-				}
+			else {
+				outputStream << "Money successfully deposited!" << std::endl;
+			}
 
-				return;
+			return;
+		}
+		case 3: {
+			outputStream << "Iban from: ";
+			String ibanFrom = std::move(getline(inputStream));
+			outputStream << "Iban to: ";
+			String ibanTo = std::move(getline(inputStream));
+			outputStream << "Amount: ";
+			double amount = parseToDouble(getline(inputStream));
+			if (!bank->transfer(ibanFrom, ibanTo, amount)) {
+				outputStream << "Operation failed! Insufficient amount, denied permissions or invalid iban!" << std::endl;
 			}
-			default:
-				outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
-				break;
+			else {
+				outputStream << "Money successfully transferred!" << std::endl;
 			}
+
+			return;
+		}
+		default:
+			outputStream << DEFAULT_ERROR_MESSAGE << std::endl;
+			break;
 		}
 	}
 
 public:
-	BankSystem() :bank(*(Bank*)nullptr) {}
+	BankSystem() :bank(nullptr) {}
 
 	virtual void Run(Bank& bank,
 		std::ostream& outputStream,
 		std::istream& inputSteam,
 		const String& databasePath = DEFAULT_DATABASE_PATH) override {
 
-		this->bank = *&bank;
-		String input;
+		this->bank = &bank;
 
 		if (!bank.readDatabase(databasePath)) {
 			outputStream <<
 				"Error loading databse." << std::endl <<
 				"Initializing new bank: " << std::endl <<
 				"Bank name: ";
-
-			getline(inputSteam, input);
-			bank.setName(input);
-
+			bank.setName(getline(inputSteam));
 			outputStream << "Bank address: ";
-			getline(inputSteam, input);
-			bank.setAddress(input);
+			bank.setAddress(getline(inputSteam));
 		}
 
 
 		while (true) {
 			printMainMenu(outputStream);
-			outputStream << ">>";
-			getline(inputSteam, input);
-			size_t option = parseToUInt(input);
+			size_t option = getNumerInputInRange(outputStream,inputSteam,1,6);
+
 			switch (option)
 			{
 			case 1: {
@@ -375,5 +357,6 @@ public:
 			outputStream << std::endl;
 		}
 
+		this->bank = nullptr;
 	}
 };

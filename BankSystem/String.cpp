@@ -163,12 +163,12 @@ void String::setString(const char* const str) {
 	strcpy(string, str);
 }
 
-void String::serialize(std::ostream& stream) const{
+void String::serialize(std::ostream& stream) const {
 	stream.write((const char*)&length, sizeof(length));
 	stream.write((const char*)string, length);
 }
 
-void String::deserialize(std::istream& stream){
+void String::deserialize(std::istream& stream) {
 	stream.read((char*)&length, sizeof(length));
 	char* temp = new char[length + 1];
 	stream.read(temp, length);
@@ -290,13 +290,19 @@ String::String(char c) {
 	string[1] = '\0';
 }
 
-String::String(size_t num) {
+String::String(size_t num) :string(nullptr) {
+	if (num == 0) {
+		setString("0");
+		return;
+	}
+
 	length = getNumberDigitsCount(num);
 	string = new char[length + 1];
-	size_t i = length;
+	size_t i = length - 1;
 	while (num != 0) {
-		string[length - i - 1] = digitToChar(num % 10);
+		string[i] = digitToChar(num % 10);
 		num /= 10;
+		--i;
 	}
 
 	string[length] = '\0';

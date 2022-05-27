@@ -5,7 +5,7 @@ bool isLowercaseLetter(char c) {
 }
 
 bool isUppercaseLetter(char c) {
-	return c >= 'a' && c <= 'z';
+	return c >= 'A' && c <= 'Z';
 }
 
 bool isLetter(char c) {
@@ -13,7 +13,7 @@ bool isLetter(char c) {
 }
 
 bool isDigit(char c) {
-	return isLowercaseLetter(c) || isUppercaseLetter(c);
+	return c >= '0' && c <= '9';
 }
 
 bool isAlphaNumericSymbol(char c) {
@@ -56,7 +56,7 @@ bool validateIban(String iban)
 			checksumString += String((size_t)(bank[i] - asciiShift));
 		}
 		else {
-			checksumString += String(bank[i]);
+			checksumString += String((size_t)charToInt(bank[i]));
 		}
 	}
 
