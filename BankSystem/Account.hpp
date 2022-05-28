@@ -1,9 +1,10 @@
 #pragma once
 #include "String.hpp"
 #include "Date.hpp"
-#include "Serializable.hpp"
+#include "ISerializable.hpp"
+#include "IPrintable.hpp"
 
-class Account: public Serializable {
+class Account : public ISerializable, public IPrintable {
 private:
 	Date dateOfCreation;
 	size_t userId;
@@ -26,53 +27,21 @@ public:
 		dateOfCreation(Date::now()) {
 	}
 
-	bool deposit(double amount) {
-		if (amount < 0) {
-			return false;
-		}
-
-		balance += amount;
-		return true;
-	}
-
+	bool deposit(double amount);
 	virtual bool withdraw(double amount) = 0;
+	virtual void print(std::ostream& stream) const = 0;
 
-	virtual void display(std::ostream& stream) const {
-		stream << "IBAN: " << iban << std::endl;
-		stream << "Client number: " << userId << std::endl;
-		stream << "Balance: " << balance << std::endl;
-	}
+	double getBalance()const;
+	size_t getCustomerId() const;
 
-	double getBalance()const {
-		return balance;
-	}
-
-	size_t getCustomerId() const {
-		return userId;
-	}
-
-	virtual void serialize(std::ostream& stream) const override {
-		iban.serialize(stream);
-		serializePrimitive(stream, balance);
-		dateOfCreation.serialize(stream);
-		serializePrimitive(stream,userId);
-		username.serialize(stream);
-		password.serialize(stream);
-	}
-
-	virtual void deserialize(std::istream& stream) override {
-		iban.deserialize(stream);
-		deserializePrimitive(stream, balance);
-		dateOfCreation.deserialize(stream);
-		deserializePrimitive(stream, userId);
-		username.deserialize(stream);
-		password.deserialize(stream);
-	}
+	virtual void serialize(std::ostream& stream) const override;
+	virtual void deserialize(std::istream& stream) override;
 
 	virtual ~Account() {}
 
 	friend bool matchIban(Account* const& account, const String& iban);
 };
+
 
 bool matchIban(Account* const& account, const String& iban) {
 	return account->iban == iban;

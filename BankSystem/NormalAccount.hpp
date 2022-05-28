@@ -12,29 +12,8 @@ public:
 		double amount = 0) :
 		Account(username, password, iban, userId, amount) {}
 
-	virtual bool withdraw(double amount) override {
-		if (amount < 0) {
-			return false;
-		}
-
-		if (balance - amount < 0) {
-			return false;
-		}
-
-		balance -= amount;
-		return true;
-	}
-
-	virtual void display(std::ostream& stream) const override {
-		stream << "Account type: normal" << std::endl;
-		Account::display(stream);
-	}
-
-	virtual void serialize(std::ostream& stream) const override {
-		Account::serialize(stream);
-	}
-
-	virtual void deserialize(std::istream& stream) override {
-		Account::deserialize(stream);
-	}
+	virtual bool withdraw(double amount) override;
+	virtual void print(std::ostream& stream) const override;
+	virtual void serialize(std::ostream& stream) const override;
+	virtual void deserialize(std::istream& stream) override;
 };

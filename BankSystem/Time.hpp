@@ -1,42 +1,19 @@
 #pragma once
+#include "IPrintable.hpp"
+#include "ISerializable.hpp"
 
-class Time :public Serializable {
+class Time :public ISerializable, public IPrintable {
 	size_t hour;
 	size_t minute;
 	size_t second;
-	size_t nanosec;
 
 public:
-	Time(time_t time) :nanosec(0) {
+	Time(time_t time);
 
-		time %= (24 * 60 * 60);
-		hour = time / 3600;
-		minute = (time % 3600) / 60;
-		second = (time % 3600) % 60;
-	}
+	static Time now();
 
-	static Time now() {
-		return Time(time(0));
-	}
-
-	virtual void serialize(std::ostream& stream) const override {
-		serializePrimitive(stream, hour);
-		serializePrimitive(stream, minute);
-		serializePrimitive(stream, second);
-		serializePrimitive(stream, nanosec);
-	}
-
-	virtual void deserialize(std::istream& stream) override {
-		deserializePrimitive(stream, hour);
-		deserializePrimitive(stream, minute);
-		deserializePrimitive(stream, second);
-		deserializePrimitive(stream, nanosec);
-	}
-
+	virtual void serialize(std::ostream& stream) const override;
+	virtual void deserialize(std::istream& stream) override;
+	virtual void print(std::ostream& stream) const override;
 	friend std::ostream& operator<<(std::ostream& stream, const Time& dt);
 };
-
-std::ostream& operator<<(std::ostream& stream, const Time& dt) {
-	stream << dt.hour << ":" << dt.minute << ":" << dt.second;
-	return stream;
-}

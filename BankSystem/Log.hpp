@@ -3,14 +3,14 @@
 #include "DateTime.hpp"
 #include "Common.hpp"
 
-class Log :public Serializable {
+class Log :public ISerializable,public IPrintable {
 	DateTime time;
 	TransactType transactType;
 	String description;
 	size_t relatedUserId;
 
 public:
-	Log() :Log(TransactType::Unknown, "", -1) {}
+	Log() :Log(TransactType::Unknown, "", 0) {}
 
 	Log(TransactType transactType, const String& description, size_t userId) :
 		transactType(transactType),
@@ -19,28 +19,10 @@ public:
 		time(DateTime::now())
 	{}
 
-	void print(std::ostream& stream) const {
-		stream << "[ " << time << " ] [ " <<
-			transactTypeToString(transactType) << " ] {" << relatedUserId << "} " <<
-			description << std::endl;
-	}
+	virtual void print(std::ostream& stream) const override;
+	virtual void serialize(std::ostream& stream) const override;
+	virtual void deserialize(std::istream& stream) override;
 
-	virtual void serialize(std::ostream& stream) const override {
-		time.serialize(stream);
-		serializePrimitive(stream, transactType);
-		description.serialize(stream);
-		serializePrimitive(stream, relatedUserId);
-	}
-
-	virtual void deserialize(std::istream& stream) override {
-		time.deserialize(stream);
-		deserializePrimitive(stream, transactType);
-		description.deserialize(stream);
-		deserializePrimitive(stream, relatedUserId);
-	}
+	friend std::ostream& operator<<(std::ostream& stream, const Log& log);
 };
 
-std::ostream& operator<<(std::ostream& stream, const Log& log) {
-	log.print(stream);
-	return stream;
-}

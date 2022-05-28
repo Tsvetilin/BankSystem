@@ -1,84 +1,25 @@
 #pragma once
+#include "IPrintable.hpp"
+#include "ISerializable.hpp"
 #include <ctime>
+#include <iostream>
 
-const size_t daysOfMonth[] = { 31, 28, 31, 30, 31, 30,
-								  31, 31, 30, 31, 30, 31 };
-
-class Date : public Serializable {
+class Date : public ISerializable, public IPrintable {
 	size_t year;
 	size_t month;
 	size_t day;
 	bool bc;
 
+	bool isLeapYear(size_t year);
+
 public:
-	Date(time_t dateTime) : year(1970), month(0), day(0), bc(false) {
+	Date(time_t dateTime);
 
-		time_t daysTillNow = dateTime / (24 * 60 * 60);
+	static Date now();
 
-		while (daysTillNow >= 365) {
-			if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) {
-				--daysTillNow;
-			}
-
-			daysTillNow -= 365;
-			++year;
-		}
-
-		time_t extraDays = daysTillNow + 1;
-		bool leapYear = year % 400 == 0 || (year % 4 == 0 && year % 100 != 0);
-
-		while (true) {
-
-			if (month == 1 && leapYear) {
-				--extraDays;
-			}
-
-			if (extraDays - daysOfMonth[month] < 0) {
-				break;
-			}
-
-			++month;
-			extraDays -= daysOfMonth[month];
-		}
-
-		if (extraDays > 0) {
-			++month;
-			day = extraDays;
-		}
-		else {
-			if (month == 2 && leapYear)
-				day = 29;
-			else if (month >= 1) {
-				day = daysOfMonth[month - 1];
-			}
-		}
-	}
-
-	static Date now() {
-		return Date(time(0));
-	}
-
-	virtual void serialize(std::ostream& stream) const override {
-		serializePrimitive(stream, year);
-		serializePrimitive(stream, month);
-		serializePrimitive(stream, day);
-		serializePrimitive(stream, bc);
-	}
-
-	virtual void deserialize(std::istream& stream) override {
-		deserializePrimitive(stream, year);
-		deserializePrimitive(stream, month);
-		deserializePrimitive(stream, day);
-		deserializePrimitive(stream, bc);
-	}
+	virtual void serialize(std::ostream& stream) const override;
+	virtual void deserialize(std::istream& stream) override;
+	virtual void print(std::ostream& stream) const override;
 
 	friend std::ostream& operator<<(std::ostream& stream, const Date& dt);
 };
-
-
-std::ostream& operator<<(std::ostream& stream, const Date& dt) {
-	stream << (dt.bc ? "BC" : "") << dt.day << "/" << dt.month << "/" << dt.year;
-	return stream;
-}
-
-

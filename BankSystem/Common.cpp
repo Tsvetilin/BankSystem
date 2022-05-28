@@ -104,9 +104,9 @@ double parseToDouble(const String& str) {
 		return parseToUInt(str);
 	}
 
-	size_t intPart = parseToUInt(str.substr(0,dotInd));
-	size_t floatingPart = parseToUInt(str.substr(dotInd, str.getLength()-dotInd));
+	size_t intPart = parseToUInt(str.substr(0, dotInd));
+	size_t floatingPart = parseToUInt(str.substr(dotInd + 1, str.getLength() - dotInd - 1));
 	size_t floatingLength = getNumberDigitsCount(floatingPart);
 
-	return (double)floatingPart / pow(10,floatingLength) + intPart;
+	return (double)floatingPart / pow(10, floatingLength) + intPart;
 }

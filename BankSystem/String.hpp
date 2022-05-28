@@ -1,8 +1,9 @@
 #pragma once
-#include "Serializable.hpp"
+#include "ISerializable.hpp"
+#include "IPrintable.hpp"
 #include <iostream>
 
-class String : public Serializable{
+class String : public ISerializable, public IPrintable{
 	char* string;
 	size_t length;
 
@@ -46,6 +47,8 @@ public:
 	bool operator!= (const String&) const;
 
 	const char& operator[](size_t) const;
+
+	virtual void print(std::ostream&) const override;
 
 	friend std::ostream& operator<<(std::ostream&, const String&);
 	friend std::istream& operator>>(std::istream&, String&);

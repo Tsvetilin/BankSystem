@@ -139,9 +139,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Account.cpp" />
+    <ClCompile Include="AccountType.cpp" />
+    <ClCompile Include="Bank.cpp" />
+    <ClCompile Include="BankSystem.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Customer.cpp" />
+    <ClCompile Include="Date.cpp" />
+    <ClCompile Include="DateTime.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NormalAccount.cpp" />
+    <ClCompile Include="PrivilegeAccount.cpp" />
+    <ClCompile Include="SavingsAccount.cpp" />
     <ClCompile Include="String.cpp" />
+    <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Account.hpp" />
@@ -151,6 +163,7 @@
     <ClInclude Include="BankSystem.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="DateTime.hpp" />
+    <ClInclude Include="IPrintable.hpp" />
     <ClInclude Include="List.hpp" />
     <ClInclude Include="Log.hpp" />
     <ClInclude Include="NormalAccount.hpp" />
@@ -158,7 +171,7 @@
     <ClInclude Include="Date.hpp" />
     <ClInclude Include="PrivilegeAccount.hpp" />
     <ClInclude Include="SavingsAccount.hpp" />
-    <ClInclude Include="Serializable.hpp" />
+    <ClInclude Include="ISerializable.hpp" />
     <ClInclude Include="String.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="TransactType.hpp" />

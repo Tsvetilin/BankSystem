@@ -1,35 +1,24 @@
 #pragma once
 #include "Time.hpp"
 #include "Date.hpp"
-#include "Serializable.hpp"
+#include "ISerializable.hpp"
+#include "IPrintable.hpp"
 
-class DateTime: public Serializable {
+
+class DateTime : public ISerializable, public IPrintable {
 	Time time;
 	Date date;
 
 public:
-	DateTime(Date date, Time time):date(date),time(time) {}
-	DateTime(time_t now):date(now),time(now) {}
+	DateTime(Date date, Time time) :date(date), time(time) {}
+	DateTime(time_t now) :date(now), time(now) {}
 
-	static DateTime now() {
-		return DateTime(Date::now(), Time::now());
-	}
+	static DateTime now();
 
-	virtual void serialize(std::ostream& stream) const override {
-		time.serialize(stream);
-		date.serialize(stream);
-	}
-
-	virtual void deserialize(std::istream& stream) override {
-		time.deserialize(stream);
-		date.deserialize(stream);
-	}
+	virtual void serialize(std::ostream& stream) const override;
+	virtual void deserialize(std::istream& stream) override;
+	virtual void print(std::ostream& stream) const override;
 
 	friend std::ostream& operator<<(std::ostream& stream, const DateTime& dt);
-		
-};
 
-std::ostream& operator<<(std::ostream& stream, const DateTime& dt) {
-	stream << dt.date << " " << dt.time;
-	return stream;
-}
+};
