@@ -29,6 +29,10 @@ char digitToChar(size_t c) {
 }
 
 size_t getNumberDigitsCount(size_t num) {
+	if (num == 0) {
+		return 1;
+	}
+
 	size_t digits = 0;
 	while (num != 0) {
 		++digits;
@@ -95,9 +99,14 @@ size_t parseToUInt(const String& input) {
 }
 
 double parseToDouble(const String& str) {
-	size_t intPart = 0;
-	size_t floatingPart = 0;
-	size_t floatingLength = 0;
+	int dotInd = str.indexOf('.');
+	if (dotInd == -1) {
+		return parseToUInt(str);
+	}
 
-	return (double)floatingPart / pow(floatingLength, 10) + intPart;
+	size_t intPart = parseToUInt(str.substr(0,dotInd));
+	size_t floatingPart = parseToUInt(str.substr(dotInd, str.getLength()-dotInd));
+	size_t floatingLength = getNumberDigitsCount(floatingPart);
+
+	return (double)floatingPart / pow(10,floatingLength) + intPart;
 }

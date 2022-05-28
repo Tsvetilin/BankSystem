@@ -14,15 +14,25 @@ class Bank : public Serializable {
 	List<Log> logs;
 
 	void printAccountsForCustomer(std::ostream& stream, size_t customerId) const {
+		bool printed = false;
 		for (size_t i = 0; i < accounts.getCount(); i++)
 		{
 			if (accounts[i]->getCustomerId() == customerId) {
 				accounts[i]->display(stream);
+				printed = true;
 			}
+		}
+
+		if (!printed) {
+			stream << "The customer specified has no accounts." << std::endl;
 		}
 	}
 
 	void printLogs(std::ostream& stream) const {
+		if (logs.getCount() == 0) {
+			stream << "No logs." << std::endl;
+		}
+
 		for (size_t i = 0; i < logs.getCount(); i++)
 		{
 			stream << logs[i] << std::endl;
@@ -56,20 +66,19 @@ class Bank : public Serializable {
 		}
 	}
 
-	Account* instantiateAccount(size_t userId, const String& iban, const String& username,
-		const String& password, AccountType type, double amount, double param = 0) const {
-		if (type == AccountType::Normal) {
-			return new NormalAccount(username, password, iban, userId, amount);
-		}
-		else if (type == AccountType::Savings) {
-			return new SavingsAccount(username, password, iban, userId, param, amount);
-		}
-		else if (type == AccountType::Privilege) {
-			return new PrivilegeAccount(username, password, iban, userId, param, amount);
-		}
-		else {
-			return nullptr;
-		}
+	Account* createNormalAccount(size_t userId, const String& iban, const String& username,
+		const String& password, double amount) {
+		return new NormalAccount(username, password, iban, userId, amount);
+	}
+
+	Account* createSavingsAccount(size_t userId, const String& iban, const String& username,
+		const String& password, double amount, double interestRate) {
+		return new SavingsAccount(username, password, iban, userId, interestRate, amount);
+	}
+
+	Account* createPrivilegeAccount(size_t userId, const String& iban, const String& username,
+		const String& password, double amount, double overdraft) const {
+		return new PrivilegeAccount(username, password, iban, userId, overdraft, amount);
 	}
 
 	Account* instantiateAccount(AccountType type) const {
@@ -158,11 +167,9 @@ public:
 		return true;
 	}
 
-	bool addAccount(size_t userId, const String& iban, const String& username,
-		const String& password, AccountType type, double amount, double param = 0) {
-
-		int index = customers.getIndexByPredicate(matchCustomerId, userId);
-		if (index == -1) {
+	bool addNormalAccount(size_t userId, const String& iban, const String& username,
+		const String& password, double amount) {
+		if (customers.getIndexByPredicate(matchCustomerId, userId) == -1) {
 			return false;
 		}
 
@@ -170,7 +177,35 @@ public:
 			return false;
 		}
 
-		accounts.add(instantiateAccount(userId, iban, username, password, type, amount, param));
+		accounts.add(createNormalAccount(userId, iban, username, password,amount));
+		return true;
+	}
+
+	bool addSavingsAccount(size_t userId, const String& iban, const String& username,
+		const String& password, double amount, double interestRate) {
+		if (customers.getIndexByPredicate(matchCustomerId, userId) == -1) {
+			return false;
+		}
+
+		if (!validateIban(iban)) {
+			return false;
+		}
+
+		accounts.add(createSavingsAccount(userId, iban, username, password, amount, interestRate));
+		return true;
+	}
+
+	bool addPrivilegeAccount(size_t userId, const String& iban, const String& username,
+		const String& password, double amount, double overdraft) {
+		if (customers.getIndexByPredicate(matchCustomerId, userId) == -1) {
+			return false;
+		}
+
+		if (!validateIban(iban)) {
+			return false;
+		}
+
+		accounts.add(createPrivilegeAccount(userId, iban, username, password, amount, overdraft));
 		return true;
 	}
 
@@ -237,6 +272,10 @@ public:
 	}
 
 	void listCustomers(std::ostream& stream) const {
+		if (customers.getCount() == 0) {
+			stream << "No customers added." << std::endl;
+		}
+
 		for (size_t i = 0; i < customers.getCount(); i++)
 		{
 			customers[i]->print(stream);
@@ -244,6 +283,10 @@ public:
 	}
 
 	void listAccounts(std::ostream& stream) const {
+		if (customers.getCount() == 0) {
+			stream << "No accounts created." << std::endl;
+		}
+
 		for (size_t i = 0; i < accounts.getCount(); i++)
 		{
 			accounts[i]->display(stream);
@@ -255,8 +298,8 @@ public:
 		if (index == -1) {
 			return false;
 		}
-		
-		printAccountsForCustomer(stream,customerId);
+
+		printAccountsForCustomer(stream, customerId);
 		return true;
 	}
 

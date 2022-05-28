@@ -33,13 +33,15 @@ class BankSystem :public App<Bank> {
 	void printEditMenu(std::ostream& outputStream) {
 		outputStream <<
 			"1. Customer" << std::endl <<
-			"2. Account" << std::endl;
+			"2. Account" << std::endl <<
+			"3. Exit" << std::endl;
 	}
 
 	void printEditOptionMenu(std::ostream& outputStream) {
 		outputStream <<
 			"1. Add" << std::endl <<
-			"2. Delete" << std::endl;
+			"2. Delete" << std::endl <<
+			"3. Exit" << std::endl;
 	}
 
 	void printListMenu(std::ostream& outputStream) {
@@ -47,22 +49,25 @@ class BankSystem :public App<Bank> {
 			"1. List all customers" << std::endl <<
 			"2. List all accounts" << std::endl <<
 			"3. List customer account" << std::endl <<
-			"4. List log" << std::endl;
+			"4. List log" << std::endl <<
+			"5. Exit" << std::endl;
 	}
 
 	void printActionMenu(std::ostream& outputStream) {
 		outputStream <<
 			"1. Withdraw from account" << std::endl <<
 			"2. Deposit to account" << std::endl <<
-			"3. Transfer";
+			"3. Transfer" << std::endl <<
+			"4. Exit" << std::endl;
 	}
 
 	void handleCustomerEdit(std::ostream& outputStream, std::istream& inputStream) {
 		printEditOptionMenu(outputStream);
 
-		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 2);
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 3);
 		switch (option)
 		{
+		case 3: return;
 		case 1: {
 			outputStream << "Customer name: ";
 			String name = std::move(getline(inputStream));
@@ -96,7 +101,7 @@ class BankSystem :public App<Bank> {
 	}
 
 	AccountType readAccountType(std::ostream& outputStream, std::istream& inputStream) {
-		outputStream <<
+		outputStream << "Chose account type:" << std::endl <<
 			"1. Normal account" << std::endl <<
 			"2. Savings account" << std::endl <<
 			"3. Privilege account" << std::endl;
@@ -119,48 +124,72 @@ class BankSystem :public App<Bank> {
 		printEditOptionMenu(outputStream);
 
 
-		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 2);
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 3);
 		switch (option)
 		{
+		case 3: return;
 		case 1: {
 			outputStream << "Account username: ";
 			String username = std::move(getline(inputStream));
-			outputStream << "Account username: ";
+			outputStream << "Account password: ";
 			String password = std::move(getline(inputStream));
 
 			outputStream << "Account iban: ";
 			String iban = std::move(getline(inputStream));
 			while (!validateIban(iban)) {
-				outputStream << "Invalid iban! Enter new: ";
+				if (iban == "-1") {
+					return;
+				}
+				outputStream << "Invalid iban! Enter new (-1 to terminate the proccess): ";
 				iban = std::move(getline(inputStream));
 			}
 
 			outputStream << "Customer id: ";
 			size_t userId = parseToUInt(getline(inputStream));
 			while (!bank->customerExists(userId)) {
-				outputStream << "Invalid customer id! Enter new: ";
+				if (userId == 0) {
+					return;
+				}
+				outputStream << "Invalid customer id! Enter new (-1 to terminate the proccess): ";
 				userId = parseToUInt(getline(inputStream));
 			}
 
 			AccountType accountType = readAccountType(outputStream, inputStream);
+			outputStream << "Amount: ";
 			double amount = parseToDouble(getline(inputStream));
 
-			double param = 0;
+			bool success = false;
 			if (accountType == AccountType::Savings) {
 				outputStream << "Interest rate: ";
-				param = parseToDouble(getline(inputStream));
+				double interestRate = parseToDouble(getline(inputStream));
+				while (interestRate <= 0 || interestRate >= 1) {
+					outputStream << "Invalid interest rate percent. Enter new: ";
+					interestRate = parseToDouble(getline(inputStream));
+				}
+
+				success = bank->addPrivilegeAccount(userId, iban, username, password, amount, interestRate);
 			}
 			else if (accountType == AccountType::Privilege) {
 				outputStream << "Overdraft amount: ";
-				param = parseToDouble(getline(inputStream));
+				double overdraft = parseToDouble(getline(inputStream));
+				while (overdraft == 0) {
+					outputStream << "Invalid overdraft amount. Enter new: ";
+					overdraft = parseToDouble(getline(inputStream));
+				}
+
+				success = bank->addPrivilegeAccount(userId, iban, username, password, amount, overdraft);
+			}
+			else if (accountType == AccountType::Normal) {
+				success = bank->addNormalAccount(userId, iban, username, password, amount);
 			}
 
-			if (!bank->addAccount(userId, iban, username, password, accountType, amount, param)) {
+			if (success) {
 				outputStream << "Error creating account! Invalid arguments!";
 			}
 			else {
 				outputStream << "Successfully created account!";
 			}
+
 			return;
 		}
 		case 2: {
@@ -183,9 +212,10 @@ class BankSystem :public App<Bank> {
 	void handleEdit(std::ostream& outputStream, std::istream& inputStream) {
 		printEditMenu(outputStream);
 
-		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 2);
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 3);
 		switch (option)
 		{
+		case 3: return;
 		case 1: {
 			handleCustomerEdit(outputStream, inputStream);
 			return;
@@ -203,10 +233,11 @@ class BankSystem :public App<Bank> {
 	void handleList(std::ostream& outputStream, std::istream& inputStream) {
 		printListMenu(outputStream);
 
-		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 4);
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 5);
 
 		switch (option)
 		{
+		case 5: return;
 		case 1: {
 			bank->listCustomers(outputStream);
 			return;
@@ -236,9 +267,10 @@ class BankSystem :public App<Bank> {
 	void handleAction(std::ostream& outputStream, std::istream& inputStream) {
 		printActionMenu(outputStream);
 
-		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 3);
+		size_t option = getNumerInputInRange(outputStream, inputStream, 1, 4);
 		switch (option)
 		{
+		case 4:return;
 		case 1: {
 			outputStream << "Iban: ";
 			String iban = std::move(getline(inputStream));
@@ -312,7 +344,7 @@ public:
 
 		while (true) {
 			printMainMenu(outputStream);
-			size_t option = getNumerInputInRange(outputStream,inputSteam,1,6);
+			size_t option = getNumerInputInRange(outputStream, inputSteam, 1, 6);
 
 			switch (option)
 			{
@@ -359,4 +391,4 @@ public:
 
 		this->bank = nullptr;
 	}
-};
+}

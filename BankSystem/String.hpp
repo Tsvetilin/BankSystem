@@ -29,7 +29,6 @@ public:
 	int indexOf(char c) const;
 	bool isAlphaNumeric() const;
 
-
 	void trim();
 	void removeWhitespace();
 	void toUpper();

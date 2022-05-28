@@ -22,6 +22,8 @@ public:
 	virtual void display(std::ostream& stream) const override {
 		stream << "Account type: savings" << std::endl;
 		Account::display(stream);
+		stream << "Interest rate: " << interestRate << std::endl;
+
 	}
 
 	virtual void serialize(std::ostream& stream) const override {
