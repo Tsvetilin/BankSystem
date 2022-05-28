@@ -40,9 +40,6 @@ public:
 	virtual ~Account() {}
 
 	friend bool matchIban(Account* const& account, const String& iban);
+	friend bool matchUsername(Account* const& account, const String& username);
+
 };
-
-
-bool matchIban(Account* const& account, const String& iban) {
-	return account->iban == iban;
-}

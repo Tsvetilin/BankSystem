@@ -154,6 +154,7 @@
     <ClCompile Include="SavingsAccount.cpp" />
     <ClCompile Include="String.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="TransactType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Account.hpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="BankSystem.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="DateTime.hpp" />
+    <ClInclude Include="FilterFunctions.hpp" />
     <ClInclude Include="IPrintable.hpp" />
     <ClInclude Include="List.hpp" />
     <ClInclude Include="Log.hpp" />

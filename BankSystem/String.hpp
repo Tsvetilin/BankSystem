@@ -30,11 +30,11 @@ public:
 	int indexOf(char c) const;
 	bool isAlphaNumeric() const;
 
-	void trim();
-	void removeWhitespace();
-	void toUpper();
-	void toLower();
-	void concat(const String&);
+	String& trim();
+	String& removeWhitespace();
+	String& toUpper();
+	String& toLower();
+	String& concat(const String&);
 
 	String& operator+=(const String&);
 	String operator+(const String&) const;

@@ -2,8 +2,7 @@
 #include "NormalAccount.hpp"
 #include "SavingsAccount.hpp"
 #include "PrivilegeAccount.hpp"
-#include "Customer.hpp"
-#include "Account.hpp"
+#include "FilterFunctions.hpp"
 
 void Bank::printAccountsForCustomer(std::ostream& stream, size_t customerId) const {
 	bool printed = false;
@@ -165,12 +164,16 @@ bool Bank::addNormalAccount(size_t userId, const String& iban, const String& use
 		return false;
 	}
 
+	if (accounts.getIndexByPredicate(matchIban, iban) != -1 || accounts.getIndexByPredicate(matchUsername, username) != -1) {
+		return false;
+	}
+
 	if (!validateIban(iban)) {
 		return false;
 	}
 
 	String log = "Created normal account iban: ";
-	log.concat(iban);
+	log.concat(iban).concat(" with deposit amount: ").concat(doubleToString(amount));
 	logs.add(Log(TransactType::CreateAccount, log, customers[index]->getId())); accounts.add(createNormalAccount(userId, iban, username, password, amount));
 	return true;
 }
@@ -182,13 +185,18 @@ bool Bank::addSavingsAccount(size_t userId, const String& iban, const String& us
 		return false;
 	}
 
+	if (accounts.getIndexByPredicate(matchIban, iban) != -1 || accounts.getIndexByPredicate(matchUsername, username) != -1) {
+		return false;
+	}
+
 	if (!validateIban(iban)) {
 		return false;
 	}
 
 	String log = "Created savings account iban: ";
-	log.concat(iban);
-	logs.add(Log(TransactType::CreateAccount, log, customers[index]->getId())); accounts.add(createSavingsAccount(userId, iban, username, password, amount, interestRate));
+	log.concat(iban).concat(" with deposit amount: ").concat(doubleToString(amount));
+	logs.add(Log(TransactType::CreateAccount, log, customers[index]->getId())); 
+	accounts.add(createSavingsAccount(userId, iban, username, password, amount, interestRate));
 	return true;
 }
 
@@ -199,12 +207,16 @@ bool Bank::addPrivilegeAccount(size_t userId, const String& iban, const String& 
 		return false;
 	}
 
+	if (accounts.getIndexByPredicate(matchIban, iban) != -1 || accounts.getIndexByPredicate(matchUsername,username)!=-1) {
+		return false;
+	}
+
 	if (!validateIban(iban)) {
 		return false;
 	}
 
 	String log = "Created privilage account iban: ";
-	log.concat(iban);
+	log.concat(iban).concat(" with deposit amount: ").concat(doubleToString(amount));
 	logs.add(Log(TransactType::CreateAccount, log, customers[index]->getId()));
 	accounts.add(createPrivilegeAccount(userId, iban, username, password, amount, overdraft));
 	return true;
@@ -249,10 +261,8 @@ bool Bank::transfer(const String& fromIban, const String& toIban, double amount)
 	bool success = accounts[indexFrom]->withdraw(amount) && accounts[indexTo]->deposit(amount);
 	if (success) {
 		String log = "Transfer from iban: ";
-		log.concat(fromIban);
-		log.concat(" to iban:");
-		log.concat(toIban);
-		logs.add(Log(TransactType::Transfer, log, customers[indexFrom]->getId()));
+		log.concat(fromIban).concat(" to iban:").concat(toIban).concat(" amount: ").concat(doubleToString(amount));
+		logs.add(Log(TransactType::Transfer, log, accounts[indexFrom]->getCustomerId()));
 	}
 
 	return success;
@@ -267,8 +277,8 @@ bool Bank::withdraw(const String& fromIban, double amount) {
 	bool success = accounts[indexFrom]->withdraw(amount);
 	if (success) {
 		String log = "Withdraw money from iban: ";
-		log.concat(fromIban);
-		logs.add(Log(TransactType::Withdraw, log, customers[indexFrom]->getId()));
+		log.concat(fromIban).concat(" amount: ").concat(doubleToString(amount));
+		logs.add(Log(TransactType::Withdraw, log, accounts[indexFrom]->getCustomerId()));
 	}
 
 	return success;
@@ -282,16 +292,16 @@ bool Bank::deposit(const String& toIban, double amount) {
 
 	bool success = accounts[indexTo]->deposit(amount);
 	if (success) {
-		String log = "Withdraw money from iban: ";
-		log.concat(toIban);
-		logs.add(Log(TransactType::Deposit, log, customers[indexTo]->getId()));
+		String log = "Deposit money to iban: ";
+		log.concat(toIban).concat(" amount: ").concat(doubleToString(amount));
+		logs.add(Log(TransactType::Deposit, log, accounts[indexTo]->getCustomerId()));
 	}
 
 	return success;
 }
 
 
-void Bank::display(std::ostream& stream) const {
+void Bank::print(std::ostream& stream) const {
 	stream << "Bank: " << name << std::endl;
 	stream << "Address: " << address << std::endl;
 	stream << "Total customers: " << customers.getCount() << std::endl;
@@ -310,19 +320,19 @@ void Bank::listCustomers(std::ostream& stream) const {
 }
 
 void Bank::listAccounts(std::ostream& stream) const {
-	if (customers.getCount() == 0) {
+	if (accounts.getCount() == 0) {
 		stream << "No accounts created." << std::endl;
 	}
 
 	for (size_t i = 0; i < accounts.getCount(); i++)
 	{
 		accounts[i]->print(stream);
+		stream << std::endl;
 	}
 }
 
 bool Bank::listCustomerAccount(std::ostream& stream, size_t customerId) const {
-	int index = customers.getIndexByPredicate(matchCustomerId, customerId);
-	if (index == -1) {
+	if (!customerExists(customerId)) {
 		return false;
 	}
 

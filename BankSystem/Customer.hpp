@@ -25,11 +25,3 @@ public:
 	friend bool matchCustomerId(Customer* const& customer, const size_t& id);
 	friend bool matchCustomerName(Customer* const& customer, const String& name);
 };
-
-bool matchCustomerId(Customer* const& customer, const size_t& id) {
-	return customer->id == id;
-}
-
-bool matchCustomerName(Customer* const& customer, const String& name) {
-	return customer->name == name;
-}

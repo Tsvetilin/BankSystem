@@ -12,6 +12,8 @@ const size_t SECONDS_IN_HOUR = MINUETES_IN_HOUR * SECONDS_IN_MINUTE;
 const char TO_UPPER_TRANSFORM = -'a' + 'A';
 const char TO_LOWER_TRANSFORM = -'A' + 'a';
 
+const size_t DOUBLE_STRING_PRECISION = 1000;
+
 bool isLowercaseLetter(char c);
 bool isUppercaseLetter(char c);
 bool isLetter(char c);
@@ -20,6 +22,7 @@ bool isAlphaNumericSymbol(char c);
 
 size_t parseToUInt(const String& input);
 double parseToDouble(const String& str);
+String doubleToString(double d);
 
 int charToInt(char c);
 char digitToChar(size_t c);

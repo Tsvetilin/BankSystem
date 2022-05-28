@@ -146,7 +146,7 @@ void BankSystem::handleAccountEdit(std::ostream& outputStream, std::istream& inp
 		}
 
 		AccountType accountType = readAccountType(outputStream, inputStream);
-		outputStream << "Amount: ";
+		outputStream << "Initial deposit amount: ";
 		double amount = parseToDouble(getline(inputStream));
 
 		bool success = false;
@@ -175,10 +175,11 @@ void BankSystem::handleAccountEdit(std::ostream& outputStream, std::istream& inp
 		}
 
 		if (success) {
-			outputStream << "Error creating account! Invalid arguments!";
+			outputStream << "Successfully created account!";
+			
 		}
 		else {
-			outputStream << "Successfully created account!";
+			outputStream << "Error creating account! Invalid arguments!";
 		}
 
 		return;
@@ -350,7 +351,7 @@ void BankSystem::Run(Bank& bank,
 			break;
 		}
 		case 4: {
-			bank.display(outputStream);
+			bank.print(outputStream);
 			break;
 		}
 		case 5: {

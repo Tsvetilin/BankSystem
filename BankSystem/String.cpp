@@ -48,7 +48,7 @@ size_t String::getLength() const
 	return length;
 }
 
-void String::concat(const String& other)
+String& String::concat(const String& other)
 {
 	length += other.length;
 
@@ -58,6 +58,7 @@ void String::concat(const String& other)
 
 	delete[] string;
 	string = temp;
+	return *this;
 }
 
 String String::substr(size_t index, size_t length = 0) const {
@@ -102,8 +103,12 @@ String String::operator+(const String& other) const
 
 std::ostream& operator<<(std::ostream& o, const String& string)
 {
-	o << string.string;
+	string.print(o);
 	return o;
+}
+
+void String::print(std::ostream& stream) const {
+	stream << string;
 }
 
 std::istream& operator>>(std::istream& i, String& string)
@@ -184,7 +189,7 @@ const char& String::operator[](size_t index) const {
 	return string[index];
 }
 
-void String::trim() {
+String& String::trim() {
 	size_t leadingSpaces = 0;
 	while (string[leadingSpaces] == ' ') {
 		++leadingSpaces;
@@ -196,6 +201,8 @@ void String::trim() {
 	}
 
 	*this = substr(leadingSpaces, length - leadingSpaces - followingSpaces);
+
+	return *this;
 }
 
 int String::indexOf(char c) const {
@@ -225,7 +232,7 @@ String& String::operator=(String&& other) noexcept {
 	return *this;
 }
 
-void String::removeWhitespace() {
+String& String::removeWhitespace() {
 	size_t countSpaces = 0;
 	for (size_t i = 0; i < length; i++)
 	{
@@ -235,7 +242,7 @@ void String::removeWhitespace() {
 	}
 
 	if (countSpaces == 0) {
-		return;
+		return *this;
 	}
 
 	char* newString = new char[length + 1 - countSpaces];
@@ -251,25 +258,27 @@ void String::removeWhitespace() {
 
 	delete[] string;
 	string = newString;
-
+	return *this;
 }
 
-void String::toUpper() {
+String& String::toUpper() {
 	for (size_t i = 0; i < length; i++)
 	{
 		if (isLowercaseLetter(string[i])) {
 			string[i] += TO_UPPER_TRANSFORM;
 		}
 	}
+	return *this;
 }
 
-void String::toLower() {
+String& String::toLower() {
 	for (size_t i = 0; i < length; i++)
 	{
 		if (isUppercaseLetter(string[i])) {
 			string[i] += TO_LOWER_TRANSFORM;
 		}
 	}
+	return *this;
 }
 
 bool String::isAlphaNumeric() const {

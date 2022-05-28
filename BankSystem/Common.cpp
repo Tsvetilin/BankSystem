@@ -44,8 +44,10 @@ size_t getNumberDigitsCount(size_t num) {
 
 bool validateIban(String iban)
 {
-	iban.toUpper();
-	iban.removeWhitespace();
+	if (String(iban).toUpper() != iban || String(iban).removeWhitespace() != iban) {
+		return false;
+	}
+
 	if (iban.getLength() == 0 || !iban.isAlphaNumeric()) {
 		return false;
 	}
@@ -87,6 +89,7 @@ size_t parseToUInt(const String& input) {
 	}
 
 	while (isDigit(input[index])) {
+		result *= 10;
 		result += input[index] - '0';
 		++index;
 	}
@@ -109,4 +112,17 @@ double parseToDouble(const String& str) {
 	size_t floatingLength = getNumberDigitsCount(floatingPart);
 
 	return (double)floatingPart / pow(10, floatingLength) + intPart;
+}
+
+String doubleToString(double d) {
+	if (d <= 0) {
+		return "0";
+	}
+
+	size_t intPart = (size_t)d;
+	d -= intPart;
+	d *= DOUBLE_STRING_PRECISION;
+	size_t doublePart = (size_t)d;
+
+	return String(intPart).concat(".").concat(String(doublePart));
 }

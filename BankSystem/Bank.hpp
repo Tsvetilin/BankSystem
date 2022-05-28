@@ -6,7 +6,7 @@
 #include "AccountType.hpp"
 #include <fstream>
 
-class Bank : public ISerializable {
+class Bank : public ISerializable, public IPrintable {
 	String name;
 	String address;
 	List<Customer*> customers;
@@ -60,13 +60,13 @@ public:
 	bool withdraw(const String& fromIban, double amount);
 	bool deposit(const String& toIban, double amount);
 
-	void display(std::ostream& stream) const;
 	void listCustomers(std::ostream& stream) const;
 	void listAccounts(std::ostream& stream) const;
 	bool listCustomerAccount(std::ostream& stream, size_t customerId) const;
 	bool listCustomerAccount(std::ostream& stream, const String& customerName) const;
 	void listLogs(std::ostream& stream) const;
 
+	virtual void print(std::ostream& stream) const override;
 	virtual void serialize(std::ostream& stream) const override;
 	virtual void deserialize(std::istream& stream) override;
 
