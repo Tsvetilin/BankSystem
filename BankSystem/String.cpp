@@ -178,6 +178,7 @@ void String::deserialize(std::istream& stream) {
 	char* temp = new char[length + 1];
 	stream.read(temp, length);
 	temp[length] = '\0';
+	delete[] string;
 	string = temp;
 }
 

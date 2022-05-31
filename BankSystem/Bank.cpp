@@ -88,6 +88,8 @@ Account* Bank::instantiateAccount(AccountType type) const {
 }
 
 void Bank::copyAccounts(const List<Account*>& accounts) {
+	this->accounts = List<Account*>(customers.getCount());
+
 	for (size_t i = 0; i < accounts.getCount(); i++)
 	{
 		if (Account* account = cloneAccount(accounts[i]))
@@ -98,6 +100,8 @@ void Bank::copyAccounts(const List<Account*>& accounts) {
 }
 
 void Bank::copyCustomers(const List<Customer*>& customers) {
+	this->customers = List<Customer*>(customers.getCount());
+
 	for (size_t i = 0; i < customers.getCount(); i++)
 	{
 		this->customers.add(new Customer(*customers[i]));
@@ -415,6 +419,8 @@ void Bank::deserialize(std::istream& stream) {
 }
 
 bool Bank::readDatabase(const String& path) {
+	// TODO: implement checksum guard
+
 	std::ifstream file(path.c_str());
 	if (!file.is_open()) {
 		return false;

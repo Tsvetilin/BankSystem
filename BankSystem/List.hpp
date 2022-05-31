@@ -13,6 +13,7 @@ class List {
 
 public:
 	List();
+	List(size_t);
 	List(const List& other);
 	List& operator= (const List& other);
 	~List();
@@ -61,6 +62,13 @@ List<T>::List() {
 	count = 0;
 	capacity = DEFAULT_CAPACITY;
 	data = new T[capacity];
+}
+
+template <typename T>
+List<T>::List(size_t capacity) {
+	count = 0;
+	this->capacity = capacity;
+	data = new T[this->capacity];
 }
 
 template <typename T>
