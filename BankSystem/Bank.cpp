@@ -10,6 +10,7 @@ void Bank::printAccountsForCustomer(std::ostream& stream, size_t customerId) con
 	{
 		if (accounts[i]->getCustomerId() == customerId) {
 			accounts[i]->print(stream);
+			stream << std::endl;
 			printed = true;
 		}
 	}
@@ -88,7 +89,7 @@ Account* Bank::instantiateAccount(AccountType type) const {
 }
 
 void Bank::copyAccounts(const List<Account*>& accounts) {
-	this->accounts = List<Account*>(customers.getCount());
+	this->accounts.clear();
 
 	for (size_t i = 0; i < accounts.getCount(); i++)
 	{
@@ -100,7 +101,7 @@ void Bank::copyAccounts(const List<Account*>& accounts) {
 }
 
 void Bank::copyCustomers(const List<Customer*>& customers) {
-	this->customers = List<Customer*>(customers.getCount());
+	this->customers.clear();
 
 	for (size_t i = 0; i < customers.getCount(); i++)
 	{
@@ -199,7 +200,7 @@ bool Bank::addSavingsAccount(size_t userId, const String& iban, const String& us
 
 	String log = "Created savings account iban: ";
 	log.concat(iban).concat(" with deposit amount: ").concat(doubleToString(amount));
-	logs.add(Log(TransactType::CreateAccount, log, customers[index]->getId())); 
+	logs.add(Log(TransactType::CreateAccount, log, customers[index]->getId()));
 	accounts.add(createSavingsAccount(userId, iban, username, password, amount, interestRate));
 	return true;
 }
@@ -211,7 +212,7 @@ bool Bank::addPrivilegeAccount(size_t userId, const String& iban, const String& 
 		return false;
 	}
 
-	if (accounts.getIndexByPredicate(matchIban, iban) != -1 || accounts.getIndexByPredicate(matchUsername,username)!=-1) {
+	if (accounts.getIndexByPredicate(matchIban, iban) != -1 || accounts.getIndexByPredicate(matchUsername, username) != -1) {
 		return false;
 	}
 

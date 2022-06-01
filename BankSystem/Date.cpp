@@ -4,6 +4,7 @@
 bool Date::isLeapYear(size_t year) {
 	return year % 400 == 0 || (year % 4 == 0 && year % 100 != 0);
 }
+
 Date::Date(time_t dateTime) : year(EPOCH_START_YEAR), month(0), day(0), bc(false) {
 
 	time_t daysTillNow = dateTime / (HOURS_IN_DAY * MINUETES_IN_HOUR * SECONDS_IN_MINUTE);

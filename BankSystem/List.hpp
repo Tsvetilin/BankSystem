@@ -21,6 +21,7 @@ public:
 	List(List&& other);
 	List& operator= (List&& other);
 
+	void clear();
 	bool contains(const T& element) const;
 
 	template<typename K>
@@ -40,6 +41,11 @@ public:
 	}
 
 };
+
+template <typename T>
+void List<T>::clear() {
+	count = 0;
+}
 
 template <typename T>
 void List<T>::copyFrom(const List& other) {
