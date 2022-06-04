@@ -385,6 +385,8 @@ void Bank::serialize(std::ostream& stream) const {
 }
 
 void Bank::deserialize(std::istream& stream) {
+	// TODO: implement checksum guard
+
 	name.deserialize(stream);
 	address.deserialize(stream);
 
@@ -420,7 +422,6 @@ void Bank::deserialize(std::istream& stream) {
 }
 
 bool Bank::readDatabase(const String& path) {
-	// TODO: implement checksum guard
 
 	std::ifstream file(path.c_str());
 	if (!file.is_open()) {

@@ -1,6 +1,7 @@
 #pragma once
 #include "Account.hpp"
 
+// TODO: add last interest rate increment date, add cron job for update
 class SavingsAccount :public Account {
 	double interestRate;
 
