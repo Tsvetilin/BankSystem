@@ -38,7 +38,7 @@ Date::Date(time_t dateTime) : year(EPOCH_START_YEAR), month(0), day(0), bc(false
 		++month;
 		day = (size_t)extraDays;
 	}
-	else {
+	else if (month >= 1) {
 		day = DAYS_OF_MONTH[month - 1];
 
 		if (month == 2 && leapYear)

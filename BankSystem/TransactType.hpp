@@ -13,4 +13,4 @@ enum class TransactType {
 };
 
 
-String transactTypeToString(const TransactType& type);
+const String& transactTypeToString(const TransactType& type);
