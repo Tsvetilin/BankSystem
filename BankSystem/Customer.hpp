@@ -11,7 +11,7 @@ private:
 	String address;
 
 public:
-	Customer() :Customer("", "") {}
+	Customer() :name(""), address(""), id(0) {}
 	Customer(const String& name, const String& address) :id(idGenerator++), name(name), address(address) {}
 
 	size_t getId()const;
