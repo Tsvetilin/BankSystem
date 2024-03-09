@@ -1,8 +1,8 @@
 #pragma once
-#include "IPrintable.hpp"
-#include "ISerializable.hpp"
+#include "../Contracts/IPrintable.hpp"
+#include "../Contracts/ISerializable.hpp"
 
-class Time :public ISerializable, public IPrintable {
+class Time : public ISerializable, public IPrintable {
 	size_t hour;
 	size_t minute;
 	size_t second;

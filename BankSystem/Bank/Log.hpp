@@ -1,7 +1,7 @@
 #pragma once
-#include "TransactType.hpp"
-#include "DateTime.hpp"
-#include "Common.hpp"
+#include "../System/TransactType.hpp"
+#include "../Utilities/DateTime.hpp"
+#include "../Utilities/Common.hpp"
 
 class Log :public ISerializable,public IPrintable {
 	DateTime time;

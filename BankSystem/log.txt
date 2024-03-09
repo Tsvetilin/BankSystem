@@ -1,2 +1,0 @@
-[28/5/2022 16:54:45] [Create customer] {1} Created customer
-[28/5/2022 16:57:46] [Create account] {1} Created privilage account iban: BG18RZBB91550123456789

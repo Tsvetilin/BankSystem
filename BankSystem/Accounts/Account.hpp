@@ -1,8 +1,8 @@
 #pragma once
-#include "String.hpp"
-#include "Date.hpp"
-#include "ISerializable.hpp"
-#include "IPrintable.hpp"
+#include "../Utilities/String.hpp"
+#include "../Utilities/Date.hpp"
+#include "../Contracts/IPrintable.hpp"
+#include "../Contracts/ISerializable.hpp"
 
 class Account : public ISerializable, public IPrintable {
 private:

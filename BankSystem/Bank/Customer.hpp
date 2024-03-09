@@ -1,6 +1,6 @@
 #pragma once
-#include "String.hpp"
-#include "Common.hpp"
+#include "../Utilities/String.hpp"
+#include "../Utilities/Common.hpp"
 
 class Customer : public ISerializable {
 	static size_t idGenerator;

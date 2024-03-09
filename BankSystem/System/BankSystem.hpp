@@ -1,6 +1,6 @@
 #pragma once
-#include "App.hpp"
-#include "Bank.hpp"
+#include "../Contracts/App.hpp"
+#include "../Bank/Bank.hpp"
 
 const String DEFAULT_DATABASE_PATH = "bank.db";
 const String DEFAULT_ERROR_MESSAGE = "Error, something went wrong! Invalid command!";

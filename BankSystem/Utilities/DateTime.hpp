@@ -1,8 +1,8 @@
 #pragma once
 #include "Time.hpp"
 #include "Date.hpp"
-#include "ISerializable.hpp"
-#include "IPrintable.hpp"
+#include "../Contracts/IPrintable.hpp"
+#include "../Contracts/ISerializable.hpp"
 
 
 class DateTime : public ISerializable, public IPrintable {

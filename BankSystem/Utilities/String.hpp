@@ -1,6 +1,6 @@
 #pragma once
-#include "ISerializable.hpp"
-#include "IPrintable.hpp"
+#include "../Contracts/ISerializable.hpp"
+#include "../Contracts/IPrintable.hpp"
 #include <iostream>
 
 class String : public ISerializable, public IPrintable{

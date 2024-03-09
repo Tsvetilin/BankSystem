@@ -1,6 +1,6 @@
 #pragma once
 #include "PrivilegeAccount.hpp"
-#include "Common.hpp"
+#include "../Utilities/Common.hpp"
 
 bool PrivilegeAccount::withdraw(double amount) {
 	if (amount < 0) {

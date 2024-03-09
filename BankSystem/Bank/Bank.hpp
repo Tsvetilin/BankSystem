@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include "Customer.hpp"
-#include "Account.hpp"
+#include "../Accounts/Account.hpp"
 #include "Log.hpp"
-#include "List.hpp"
-#include "AccountType.hpp"
+#include "../Utilities/List.hpp"
+#include "../Accounts/AccountType.hpp"
 #include <fstream>
 
 class Bank : public ISerializable, public IPrintable {

@@ -1,8 +1,8 @@
 #include "Bank.hpp"
-#include "NormalAccount.hpp"
-#include "SavingsAccount.hpp"
-#include "PrivilegeAccount.hpp"
-#include "FilterFunctions.hpp"
+#include "../Accounts/NormalAccount.hpp"
+#include "../Accounts/PrivilegeAccount.hpp"
+#include "../Accounts/SavingsAccount.hpp"
+#include "../Utilities/FilterFunctions.hpp"
 
 void Bank::printAccountsForCustomer(std::ostream& stream, size_t customerId) const {
 	bool printed = false;

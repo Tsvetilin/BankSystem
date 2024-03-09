@@ -1,6 +1,6 @@
 #include <iostream>
-#include "BankSystem.hpp"
-#include "Bank.hpp"
+#include "System/BankSystem.hpp"
+#include "Bank/Bank.hpp"
 
 int main()
 {

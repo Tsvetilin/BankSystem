@@ -1,6 +1,6 @@
 #pragma once
-#include "IPrintable.hpp"
-#include "ISerializable.hpp"
+#include "../Contracts/IPrintable.hpp"
+#include "../Contracts/ISerializable.hpp"
 #include <ctime>
 #include <iostream>
 
